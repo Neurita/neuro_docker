@@ -27,6 +27,7 @@ EXPOSE 22
 
 # Set environment variables.
 ENV HOME /root
+ENV SOFT $HOME
 ENV BASHRC $HOME/.bashrc
 
 # Define working directory.
@@ -50,7 +51,7 @@ RUN \
 
 # SimpleITK
 RUN \
-    if [ ! -e  simpleitk ]; then \
+    if [ ! -e  $SOFT/simpleitk ]; then \
         mkdir simpleitk && \
         cd simpleitk && \
         git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
@@ -67,7 +68,7 @@ RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 # VTK (http://www.vtk.org)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e  vtk ]; then \
+    if [ ! -e  $SOFT/vtk ]; then \
         mkdir vtk && \
         cd vtk && \
         git clone https://gitlab.kitware.com/vtk/vtk.git -b $VTK_VERSION VTK && \
@@ -89,7 +90,7 @@ RUN ldconfig
 
 # ITK
 # RUN \
-#     if [ ! -e  vtk ]; then \
+#     if [ ! -e  $SOFT/itk ]; then \
 #         mkdir itk && \
 #         cd itk && \
 #         git clone http://itk.org/ITK.git -b $ITK_VERSION && \
@@ -136,7 +137,7 @@ RUN \
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e  ants ]; then \
+    if [ ! -e $SOFT/ants ]; then \
         mkdir ants && \
         cd ants && \
         git clone https://github.com/stnava/ANTs.git -b $ANTS_VERSION  && \
@@ -159,7 +160,7 @@ RUN ldconfig
 # PETPVC (https://github.com/UCL/PETPVC)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e  petpvc ]; then \
+    if [ ! -e  $SOFT/petpvc ]; then \
         mkdir petpvc && \
         cd petpvc && \
         git clone https://github.com/UCL/PETPVC.git -b $PETPVC_VERSION && \
@@ -179,7 +180,7 @@ RUN ldconfig
 # Camino (http://camino.cs.ucl.ac.uk/)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e  camino ]; then \
+    if [ ! -e $SOFT/camino ]; then \
         git clone git://git.code.sf.net/p/camino/code camino \
     fi \
 
