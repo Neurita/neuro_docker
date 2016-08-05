@@ -44,3 +44,18 @@ source $HOME/.scripts/git-completion.sh
 
 # Z
 source $HOME/.scripts/z.sh
+
+# helper functions
+addapath() {
+    if [ -e $1 ]; then
+        export PATH=$PATH:$1
+    fi
+    }
+
+addlibpath() {
+    if [ -e $1 ]; then
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$1
+    fi
+}
+
+# other stuff
