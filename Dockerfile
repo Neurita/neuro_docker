@@ -32,11 +32,11 @@ WORKDIR /root
 CMD ["bash"]
 
 # Python
-RUN apt-get install python3-dev python3-pip python3-virtualenv
+RUN apt-get install -y python3-dev python3-pip python3-virtualenv
 
 # neurodebian
+RUN wget -O- http://neuro.debian.net/lists/xenial.de-md.full | tee /etc/apt/sources.list.d/neurodebian.sources.list
 RUN \
-    wget -O- http://neuro.debian.net/lists/xenial.de-md.full | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:800xA5D32F012649A5A9 && \
     apt-get update
 
