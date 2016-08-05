@@ -89,19 +89,21 @@ RUN ldconfig
 
 # ITK
 # RUN \
-#     mkdir itk && \
-#     cd itk && \
-#     git clone http://itk.org/ITK.git -b $ITK_VERSION && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-#           -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
-#           -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
-#           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
-#           ../ITK && \
-#     make -j $N_CPUS && \
-#     make install && \
-#     cd ../..
+#     if [ ! -e  vtk ]; then \
+#         mkdir itk && \
+#         cd itk && \
+#         git clone http://itk.org/ITK.git -b $ITK_VERSION && \
+#         mkdir build && \
+#         cd build && \
+#         cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+#               -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
+#               -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
+#               -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
+#               ../ITK && \
+#         make -j $N_CPUS && \
+#         make install && \
+#         cd ../..; \
+#     fi
 #
 # RUN ldconfig
 
@@ -119,10 +121,12 @@ RUN \
     apt-get install -f
 
 RUN \
-    chsh -s /usr/bin/tcsh  && \
-    curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
-    tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
-    chsh -s /bin/bash
+    if [ ! -e  $HOME/abin ]; then \
+        chsh -s /usr/bin/tcsh  && \
+        curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
+        tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
+        chsh -s /bin/bash ;\
+    fi
 
 RUN \
     echo "addapath $HOME/abin" >> $BASHRC
