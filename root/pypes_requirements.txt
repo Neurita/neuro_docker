@@ -1,0 +1,13 @@
+numpy==1.11.1
+scipy==0.17.1
+nibabel==2.0.2
+hansel==0.9.1
+nilearn==0.2.5
+nipype==0.12.0rc1
+nipy==0.4.0
+invoke==0.13.0
+git+https://github.com/emre/kaptan.git@master#egg=kaptan
+git+https://github.com/moloney/dcmstack#egg=dcmstack
+git+https://github.com/darcymason/pydicom@master#egg=pydicom
+git+https://github.com/neurita/boyle@master#egg=boyle
+git+https://github.com/neurita/pypes@master#egg=pypes
