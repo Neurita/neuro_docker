@@ -51,16 +51,14 @@ RUN \
 
 # SimpleITK
 RUN \
-    if [ ! -e  $SOFT/simpleitk ]; then \
-        mkdir simpleitk && \
-        cd simpleitk && \
-        git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
-        mkdir build && \
-        cd build && \
-        cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
-        make -j $N_CPUS && \
-        cd ../..; \
-    fi
+    mkdir simpleitk && \
+    cd simpleitk && \
+    git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
+    mkdir build && \
+    cd build && \
+    cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
+    make -j $N_CPUS && \
+    cd ../..
 
 RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 
@@ -68,21 +66,19 @@ RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 # VTK (http://www.vtk.org)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e  $SOFT/vtk ]; then \
-        mkdir vtk && \
-        cd vtk && \
-        git clone https://gitlab.kitware.com/vtk/vtk.git -b $VTK_VERSION VTK && \
-        mkdir build && \
-        cd build && \
-        cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-              -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
-              -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
-              -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
-              ../VTK && \
-        make -j $N_CPUS && \
-        make install && \
-        cd ../..; \
-    fi
+    mkdir vtk && \
+    cd vtk && \
+    git clone https://gitlab.kitware.com/vtk/vtk.git -b $VTK_VERSION VTK && \
+    mkdir build && \
+    cd build && \
+    cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+          -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
+          -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
+          -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
+          ../VTK && \
+    make -j $N_CPUS && \
+    make install && \
+    cd ../..
 
 RUN echo "addlibpath $pwd/vtk/build/lib" >> $BASHRC
 
@@ -90,22 +86,20 @@ RUN ldconfig
 
 # ITK
 # RUN \
-#     if [ ! -e  $SOFT/itk ]; then \
-#         mkdir itk && \
-#         cd itk && \
-#         git clone http://itk.org/ITK.git -b $ITK_VERSION && \
-#         mkdir build && \
-#         cd build && \
-#         cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-#               -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
-#               -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
-#               -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
-#               ../ITK && \
-#         make -j $N_CPUS && \
-#         make install && \
-#         cd ../..; \
-#     fi
-#
+#     mkdir itk && \
+#     cd itk && \
+#     git clone http://itk.org/ITK.git -b $ITK_VERSION && \
+#     mkdir build && \
+#     cd build && \
+#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+#           -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
+#           -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
+#           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
+#           ../ITK && \
+#     make -j $N_CPUS && \
+#     make install && \
+#     cd ../..
+
 # RUN ldconfig
 
 #-------------------------------------------------------------------------------
@@ -122,12 +116,10 @@ RUN \
     apt-get install -f
 
 RUN \
-    if [ ! -e  $HOME/abin ]; then \
-        chsh -s /usr/bin/tcsh  && \
-        curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
-        tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
-        chsh -s /bin/bash ;\
-    fi
+    chsh -s /usr/bin/tcsh  && \
+    curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
+    tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
+    chsh -s /bin/bash ;\
 
 RUN \
     echo "addapath $HOME/abin" >> $BASHRC
@@ -137,17 +129,15 @@ RUN \
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e $SOFT/ants ]; then \
-        mkdir ants && \
-        cd ants && \
-        git clone https://github.com/stnava/ANTs.git -b $ANTS_VERSION  && \
-        mkdir build && \
-        cd build && \
-        cmake -DUSE_VTK=ON -DUSE_SYSTEM_VTK=ON -DVTK_DIR=$HOME/vtk/build && \
-        make -j $N_CPUS && \
-        make install && \
-        cd ../..; \
-    fi
+    mkdir ants && \
+    cd ants && \
+    git clone https://github.com/stnava/ANTs.git -b $ANTS_VERSION  && \
+    mkdir build && \
+    cd build && \
+    cmake -DUSE_VTK=ON -DUSE_SYSTEM_VTK=ON -DVTK_DIR=$HOME/vtk/build && \
+    make -j $N_CPUS && \
+    make install && \
+    cd ../..; \
 
 RUN \
     echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC
@@ -160,16 +150,14 @@ RUN ldconfig
 # PETPVC (https://github.com/UCL/PETPVC)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e  $SOFT/petpvc ]; then \
-        mkdir petpvc && \
-        cd petpvc && \
-        git clone https://github.com/UCL/PETPVC.git -b $PETPVC_VERSION && \
-        mkdir build && \
-        cd build && \
-        cmake -DITK_DIR=$HOME/ants/build/ITKv4-build && \
-        make -j $N_CPUS && \
-        cd ../..; \
-    fi
+    mkdir petpvc && \
+    cd petpvc && \
+    git clone https://github.com/UCL/PETPVC.git -b $PETPVC_VERSION && \
+    mkdir build && \
+    cd build && \
+    cmake -DITK_DIR=$HOME/ants/build/ITKv4-build && \
+    make -j $N_CPUS && \
+    cd ../..; \
 
 RUN echo "addapath $HOME/petpvc/build/src" >> $BASHRC
 
@@ -180,9 +168,7 @@ RUN ldconfig
 # Camino (http://camino.cs.ucl.ac.uk/)
 #-------------------------------------------------------------------------------
 RUN \
-    if [ ! -e $SOFT/camino ]; then \
-        git clone git://git.code.sf.net/p/camino/code camino \
-    fi \
+    git clone git://git.code.sf.net/p/camino/code camino
 
 RUN \
     echo "export MANPATH=$HOME/camino/man:$MANPATH" >> $BASHRC && \
