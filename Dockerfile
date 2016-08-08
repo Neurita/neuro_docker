@@ -123,7 +123,7 @@ RUN \
     apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
     apt-get update && \
-    sudo ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
     dpkg -i http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb && \
     apt-get install -f
 
