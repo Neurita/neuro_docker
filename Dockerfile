@@ -49,18 +49,6 @@ RUN \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     apt-get update
 
-# SimpleITK
-# RUN \
-#     mkdir simpleitk && \
-#     cd simpleitk && \
-#     git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
-#     make -j $N_CPUS && \
-#     cd ../..
-#
-# RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
@@ -82,11 +70,12 @@ RUN \
     make install && \
     cd ../..
 
-RUN echo "addlibpath $pwd/vtk/build/lib" >> $BASHRC
-
 RUN ldconfig
 
+
+#-------------------------------------------------------------------------------
 # ITK
+#-------------------------------------------------------------------------------
 # RUN \
 #     mkdir itk && \
 #     cd itk && \
@@ -102,7 +91,28 @@ RUN ldconfig
 #     make install && \
 #     cd ../..
 
+# RUN \
+#   echo "addlibpath $pwd/itk/build/lib" >> $BASHRC
+#   echo "addapath $pwd/itk/build/bin" >> $BASHRC
+
 # RUN ldconfig
+
+
+#-------------------------------------------------------------------------------
+# SimpleITK
+#-------------------------------------------------------------------------------
+# RUN \
+#     mkdir simpleitk && \
+#     cd simpleitk && \
+#     git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
+#     mkdir build && \
+#     cd build && \
+#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
+#     make -j $N_CPUS && \
+#     cd ../..
+#
+# RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
+
 
 #-------------------------------------------------------------------------------
 # AFNI
@@ -110,7 +120,7 @@ RUN ldconfig
 #-------------------------------------------------------------------------------
 RUN \
     apt-get install -y tcsh xfonts-base python-qt4  && \
-    apt-get install -y libmotif4 libmotif-dev motif-clients && \
+    apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
     apt-get update && \
     sudo ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
