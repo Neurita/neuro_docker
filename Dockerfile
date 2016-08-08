@@ -146,10 +146,13 @@ RUN \
 RUN \
     mkdir ants && \
     cd ants && \
-    git clone https://github.com/stnava/ANTs.git -b $ANTS_VERSION  && \
+    git clone https://github.com/stnava/ANTs.git -b $ANTS_VERSION && \
     mkdir build && \
     cd build && \
-    cmake -DUSE_VTK=ON -DUSE_SYSTEM_VTK=ON -DVTK_DIR=$HOME/vtk/build && \
+    cmake -DUSE_VTK=ON \
+          -DUSE_SYSTEM_VTK=ON \
+          -DVTK_DIR=$HOME/vtk/build \
+          ../ANTs && \
     make -j $N_CPUS && \
     make install && \
     cd ../..
