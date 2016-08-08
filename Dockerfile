@@ -153,7 +153,6 @@ RUN \
     cd build && \
     cmake -DUSE_VTK=ON \
           -DUSE_SYSTEM_VTK=ON \
-          -DVTK_DIR=$HOME/vtk/build \
           ../ANTs && \
     make -j $N_CPUS && \
     make install && \
