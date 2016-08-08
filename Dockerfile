@@ -50,17 +50,17 @@ RUN \
     apt-get update
 
 # SimpleITK
-RUN \
-    mkdir simpleitk && \
-    cd simpleitk && \
-    git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
-    mkdir build && \
-    cd build && \
-    cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
-    make -j $N_CPUS && \
-    cd ../..
-
-RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
+# RUN \
+#     mkdir simpleitk && \
+#     cd simpleitk && \
+#     git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
+#     mkdir build && \
+#     cd build && \
+#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
+#     make -j $N_CPUS && \
+#     cd ../..
+#
+# RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
