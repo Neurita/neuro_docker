@@ -129,11 +129,11 @@ RUN \
     dpkg -i libxp6_1.0.2-2_amd64.deb && \
     apt-get install -f
 
-RUN \
-    curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
-    chsh -s /usr/bin/tcsh && \
-    tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
-    chsh -s /bin/bash;
+RUN curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
+
+RUN ["chsh", "-s", "/usr/bin/tcsh"]
+RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"]
+RUN ["chsh", "-s", "/bin/bash"]
 
 RUN \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
