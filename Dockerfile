@@ -137,9 +137,6 @@ RUN \
 
 RUN \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    $HOME/abin/suma -updated_env
-
-RUN \
     echo "addapath $HOME/abin" >> $BASHRC
 
 
