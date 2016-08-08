@@ -65,6 +65,8 @@ RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
 #-------------------------------------------------------------------------------
+RUN apt-get build-dep vtk6
+
 RUN \
     mkdir vtk && \
     cd vtk && \
