@@ -65,7 +65,7 @@ RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
 #-------------------------------------------------------------------------------
-RUN apt-get build-dep vtk6
+RUN apt-get -y build-dep vtk6
 
 RUN \
     mkdir vtk && \
@@ -180,7 +180,7 @@ RUN \
 # FSL (http://fsl.fmrib.ox.ac.uk)
 #-------------------------------------------------------------------------------
 RUN \
-    apt-get install fsl-complete && \
+    apt-get install -y fsl-complete && \
     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
     echo "export FSLPARALLEL=condor" >> $BASHRC
 
@@ -198,6 +198,7 @@ ENV WORKON_HOME $HOME/pyenvs
 RUN \
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC
+    echo "workon pytre" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # source .bashrc
