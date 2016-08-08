@@ -128,11 +128,16 @@ RUN \
     dpkg -i libxp6_1.0.2-2_amd64.deb && \
     apt-get install -f
 
+RUN curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
+
 RUN \
-    chsh -s /usr/bin/tcsh  && \
-    curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
+    chsh -s /usr/bin/tcsh && \
     tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
-    chsh -s /bin/bash ;\
+    chsh -s /bin/bash
+
+RUN \
+    cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
+    suma -updated_env
 
 RUN \
     echo "addapath $HOME/abin" >> $BASHRC
@@ -150,7 +155,7 @@ RUN \
     cmake -DUSE_VTK=ON -DUSE_SYSTEM_VTK=ON -DVTK_DIR=$HOME/vtk/build && \
     make -j $N_CPUS && \
     make install && \
-    cd ../..; \
+    cd ../..
 
 RUN \
     echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC
