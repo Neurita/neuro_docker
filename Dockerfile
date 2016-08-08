@@ -143,7 +143,7 @@ RUN \
 #-------------------------------------------------------------------------------
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
-RUN apt-get -y install vtk6
+RUN apt-get -y install libvtk6-dev
 
 RUN \
     mkdir ants && \
