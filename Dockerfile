@@ -4,7 +4,7 @@ MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
 ENV PETPVC_VERSION master
 ENV ITK_VERSION v4.10.0
-ENV VTK_VERSION v7.0.0
+ENV VTK_VERSION v6.3.0
 ENV SIMPLEITK_VERSION v0.10.0
 ENV ANTS_VERSION v2.1.0
 ENV N_CPUS 2
@@ -143,8 +143,6 @@ RUN \
 #-------------------------------------------------------------------------------
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
-RUN apt-get -y install libvtk6-dev
-
 RUN \
     mkdir ants && \
     cd ants && \
@@ -153,6 +151,7 @@ RUN \
     cd build && \
     cmake -DUSE_VTK=ON \
           -DUSE_SYSTEM_VTK=ON \
+          -DVTK_DIR=$HOME/vtk/build \
           ../ANTs && \
     make -j $N_CPUS && \
     make install && \
