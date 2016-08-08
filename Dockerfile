@@ -45,6 +45,7 @@ RUN \
 
 # neurodebian
 RUN wget -O- http://neuro.debian.net/lists/xenial.de-md.full | tee /etc/apt/sources.list.d/neurodebian.sources.list
+
 RUN \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     apt-get update
@@ -92,7 +93,7 @@ RUN ldconfig
 #     cd ../..
 
 # RUN \
-#   echo "addlibpath $pwd/itk/build/lib" >> $BASHRC
+#   echo "addlibpath $pwd/itk/build/lib" >> $BASHRC && \
 #   echo "addapath $pwd/itk/build/bin" >> $BASHRC
 
 # RUN ldconfig
@@ -128,16 +129,15 @@ RUN \
     dpkg -i libxp6_1.0.2-2_amd64.deb && \
     apt-get install -f
 
-RUN curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
-
 RUN \
+    curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries && \
     chsh -s /usr/bin/tcsh && \
     tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
-    chsh -s /bin/bash
+    chsh -s /bin/bash;
 
 RUN \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    suma -updated_env
+    $HOME/abin/suma -updated_env
 
 RUN \
     echo "addapath $HOME/abin" >> $BASHRC
@@ -158,9 +158,8 @@ RUN \
     cd ../..
 
 RUN \
-    echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC
+    echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC && \
     echo "addapath $ANTSPATH" >> $BASHRC
-
 
 RUN ldconfig
 
@@ -205,15 +204,15 @@ RUN \
 #-------------------------------------------------------------------------------
 RUN \
     pip instal virtualenvwrapper && \
-    source /usr/local/bin/virtualenvwrapper.sh
-    mkvirtualenv -p /usr/bin/python3 pytre
+    source /usr/local/bin/virtualenvwrapper.sh && \
+    mkvirtualenv -p /usr/bin/python3 pytre && \
     pip install -r root/pypes_requirements.txt
 
 ENV WORKON_HOME $HOME/pyenvs
 
 RUN \
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
-    echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC
+    echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
     echo "workon pytre" >> $BASHRC
 
 #-------------------------------------------------------------------------------
