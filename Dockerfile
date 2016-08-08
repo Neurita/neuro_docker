@@ -124,7 +124,8 @@ RUN \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
     apt-get update && \
     ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
-    dpkg -i http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb && \
+    wget -c http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb && \
+    dpkg -i libxp6_1.0.2-2_amd64.deb && \
     apt-get install -f
 
 RUN \
