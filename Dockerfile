@@ -62,10 +62,10 @@ RUN \
     git clone https://gitlab.kitware.com/vtk/vtk.git -b $VTK_VERSION VTK && \
     mkdir build && \
     cd build && \
-    cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-          -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
-          -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
-          -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
+    cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
+          -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
+          -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python2.7m \
+          -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
           ../VTK && \
     make -j $N_CPUS && \
     make install && \
@@ -83,10 +83,10 @@ RUN ldconfig
 #     git clone http://itk.org/ITK.git -b $ITK_VERSION && \
 #     mkdir build && \
 #     cd build && \
-#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-#           -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
-#           -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
-#           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
+    # cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
+    #       -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
+    #       -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python2.7m \
+    #       -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
 #           ../ITK && \
 #     make -j $N_CPUS && \
 #     make install && \
