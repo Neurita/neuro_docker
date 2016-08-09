@@ -6,8 +6,20 @@ ENV PETPVC_VERSION master
 ENV ITK_VERSION v4.10.0
 ENV VTK_VERSION v6.3.0
 ENV SIMPLEITK_VERSION v0.10.0
-ENV ANTS_VERSION v2.1.0
+ENV ANTS_VERSION v2.1.0_neurita1
 ENV N_CPUS 2
+
+ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
+ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb
+ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
+
+ENV VTK_GIT https://gitlab.kitware.com/vtk/vtk.git
+ENV ITK_GIT http://itk.org/ITK.git
+ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
+ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
+ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
+ENV ANTS_GIT https://github.com/stnava/ANTs.git
+
 
 # Install.
 RUN \
@@ -48,7 +60,7 @@ RUN \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 
 # neurodebian
-RUN wget -O- http://neuro.debian.net/lists/xenial.de-md.full | tee /etc/apt/sources.list.d/neurodebian.sources.list
+RUN wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list
 
 RUN \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
@@ -63,7 +75,7 @@ RUN apt-get -y build-dep vtk6
 RUN \
     mkdir vtk && \
     cd vtk && \
-    git clone https://gitlab.kitware.com/vtk/vtk.git -b $VTK_VERSION VTK && \
+    git clone $VTK_GIT -b $VTK_VERSION VTK && \
     mkdir build && \
     cd build && \
     cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
@@ -84,7 +96,7 @@ RUN ldconfig
 # RUN \
 #     mkdir itk && \
 #     cd itk && \
-#     git clone http://itk.org/ITK.git -b $ITK_VERSION && \
+#     git clone $ITK_GIT -b $ITK_VERSION && \
 #     mkdir build && \
 #     cd build && \
     # cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
@@ -109,10 +121,18 @@ RUN ldconfig
 # RUN \
 #     mkdir simpleitk && \
 #     cd simpleitk && \
-#     git clone --recursive http://itk.org/SimpleITK.git -b $SIMPLEITK_VERSION && \
+#     git clone --recursive $SIMPLEITK_GIT -b $SIMPLEITK_VERSION && \
 #     mkdir build && \
 #     cd build && \
-#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 -DWRAP_JAVA=OFF -DWRAP_CSHARP=OFF -DWRAP_RUBY=OFF ../SimpleITK/SuperBuild && \
+#     cmake \
+#            -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+#            -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
+#            -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
+#            -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so.1 \
+#            -DWRAP_JAVA=OFF \
+#            -DWRAP_CSHARP=OFF \
+#            -DWRAP_RUBY=OFF \
+#            ../SimpleITK/SuperBuild && \
 #     make -j $N_CPUS && \
 #     cd ../..
 #
@@ -129,11 +149,11 @@ RUN \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
     apt-get update && \
     ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
-    wget -c http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb && \
-    dpkg -i libxp6_1.0.2-2_amd64.deb && \
+    wget -c $LIBXP_URL && \
+    dpkg -i `basename $LIBXP_URL` && \
     apt-get install -f
 
-RUN curl -O https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
+RUN curl -O $AFNI_URL
 
 RUN ["chsh", "-s", "/usr/bin/tcsh"]
 RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"]
@@ -150,7 +170,7 @@ RUN \
 RUN \
     mkdir ants && \
     cd ants && \
-    git clone https://github.com/stnava/ANTs.git -b $ANTS_VERSION && \
+    git clone $ANTS_GIT -b $ANTS_VERSION && \
     mkdir build && \
     cd build && \
     cmake -DUSE_VTK=ON \
@@ -173,7 +193,7 @@ RUN ldconfig
 RUN \
     mkdir petpvc && \
     cd petpvc && \
-    git clone https://github.com/UCL/PETPVC.git -b $PETPVC_VERSION && \
+    git clone $PETPVC_GIT -b $PETPVC_VERSION && \
     mkdir build && \
     cd build && \
     cmake -DITK_DIR=$HOME/ants/build/ITKv4-build && \
@@ -189,7 +209,7 @@ RUN ldconfig
 # Camino (http://camino.cs.ucl.ac.uk/)
 #-------------------------------------------------------------------------------
 RUN \
-    git clone git://git.code.sf.net/p/camino/code camino
+    git clone $CAMINO_GIT camino
 
 RUN \
     echo "export MANPATH=$HOME/camino/man:$MANPATH" >> $BASHRC && \
@@ -215,6 +235,7 @@ RUN \
 ENV WORKON_HOME $HOME/pyenvs
 
 RUN \
+    echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
     echo "workon pytre" >> $BASHRC
