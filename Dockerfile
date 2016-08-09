@@ -18,7 +18,7 @@ ENV ITK_GIT http://itk.org/ITK.git
 ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
 ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
-ENV ANTS_GIT https://github.com/stnava/ANTs.git
+ENV ANTS_GIT https://github.com/neurita/ANTs.git
 
 
 # Install.
