@@ -41,7 +41,11 @@ RUN apt-get install -y python3-dev python3-pip python3-virtualenv
 
 # Build tools
 RUN \
-  apt-get install -y cmake
+  apt-get install -y cmake gcc-4.9 g++-4.9 gfortran-4.9
+
+RUN \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 
 # neurodebian
 RUN wget -O- http://neuro.debian.net/lists/xenial.de-md.full | tee /etc/apt/sources.list.d/neurodebian.sources.list
