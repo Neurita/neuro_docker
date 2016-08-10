@@ -171,6 +171,7 @@ RUN \
     mkdir ants && \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION && \
+    git am --signoff < patches/ANTs/0001-fix-ifstream-error.patch && \
     mkdir build && \
     cd build && \
     cmake -DUSE_VTK=ON \
