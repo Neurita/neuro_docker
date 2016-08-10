@@ -6,7 +6,7 @@ ENV PETPVC_VERSION master
 ENV ITK_VERSION v4.10.0
 ENV VTK_VERSION v6.3.0
 ENV SIMPLEITK_VERSION v0.10.0
-ENV ANTS_VERSION v2.1.0_neurita1
+ENV ANTS_VERSION v2.1.0
 ENV N_CPUS 2
 
 ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
@@ -18,7 +18,7 @@ ENV ITK_GIT http://itk.org/ITK.git
 ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
 ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
-ENV ANTS_GIT https://github.com/neurita/ANTs.git
+ENV ANTS_GIT https://github.com/stnava/ANTs.git
 
 
 # Install.
