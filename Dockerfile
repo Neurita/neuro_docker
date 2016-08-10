@@ -34,6 +34,7 @@ RUN \
 ADD root/.bashrc /root/.bashrc
 ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
+ADD patches /root/patches
 
 EXPOSE 22
 
@@ -171,7 +172,7 @@ RUN \
     mkdir ants && \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION && \
-    git am --signoff < patches/ANTs/0001-fix-ifstream-error.patch && \
+    git am --signoff < /root/patches/ANTs/0001-fix-ifstream-error.patch && \
     mkdir build && \
     cd build && \
     cmake -DUSE_VTK=ON \
