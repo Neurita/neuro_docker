@@ -19,7 +19,7 @@ ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
 ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
 ENV ANTS_GIT https://github.com/stnava/ANTs.git
-
+ENV PYENV_NAME pytre
 
 # Install.
 RUN \
@@ -171,8 +171,10 @@ RUN \
 RUN \
     mkdir ants && \
     cd ants && \
-    git clone $ANTS_GIT -b $ANTS_VERSION && \
+    git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
+    cd ANTs && \
     git am --signoff < /root/patches/ANTs/0001-fix-ifstream-error.patch && \
+    cd .. && \
     mkdir build && \
     cd build && \
     cmake -DUSE_VTK=ON \
@@ -231,7 +233,7 @@ RUN \
 RUN \
     pip instal virtualenvwrapper && \
     source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv -p /usr/bin/python3 pytre && \
+    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
     pip install -r root/pypes_requirements.txt
 
 ENV WORKON_HOME $HOME/pyenvs
@@ -240,7 +242,7 @@ RUN \
     echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
-    echo "workon pytre" >> $BASHRC
+    echo "workon $PYENV_NAME" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # source .bashrc
