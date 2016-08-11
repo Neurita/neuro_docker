@@ -168,38 +168,22 @@ RUN \
 #-------------------------------------------------------------------------------
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
-# RUN \
-#     mkdir ants && \
-#     cd ants && \
-#     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
-#     cd ANTs && \
-#     git am --signoff < /root/patches/ANTs/0001-fix-ifstream-error.patch && \
-#     cd .. && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DUSE_VTK=ON \
-#           -DUSE_SYSTEM_VTK=ON \
-#           -DVTK_DIR=$HOME/vtk/build \
-#           ../ANTs && \
-#     make -j $N_CPUS && \
-#     make install && \
-#     cd ../..
-
-RUN mkdir ants
-RUN cd ants
-RUN git clone $ANTS_GIT -b $ANTS_VERSION ANTs
-RUN cd ANTs
-RUN git am --signoff < /root/patches/ANTs/0001-fix-ifstream-error.patch
-RUN cd ..
-RUN mkdir build
-RUN cd build
-RUN cmake -DUSE_VTK=ON \
-       -DUSE_SYSTEM_VTK=ON \
-       -DVTK_DIR=$HOME/vtk/build \
-       ../ANTs
-RUN make -j $N_CPUS
-RUN make install
-RUN cd ../..
+RUN \
+    mkdir ants && \
+    cd ants && \
+    git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
+    cd ANTs && \
+    git apply /root/patches/ANTs/0001-fix-ifstream-error.patch && \
+    cd .. && \
+    mkdir build && \
+    cd build && \
+    cmake -DUSE_VTK=ON \
+          -DUSE_SYSTEM_VTK=ON \
+          -DVTK_DIR=$HOME/vtk/build \
+          ../ANTs && \
+    make -j $N_CPUS && \
+    make install && \
+    cd ../..
 
 RUN \
     echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC && \
