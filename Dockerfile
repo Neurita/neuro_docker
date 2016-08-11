@@ -111,7 +111,7 @@ RUN ldconfig
 
 # RUN \
 #   echo "addlibpath $pwd/itk/build/lib" >> $BASHRC && \
-#   echo "addapath $pwd/itk/build/bin" >> $BASHRC
+#   echo "addpath $pwd/itk/build/bin" >> $BASHRC
 
 # RUN ldconfig
 
@@ -135,7 +135,7 @@ RUN ldconfig
 #            -DWRAP_CSHARP=OFF \
 #            -DWRAP_RUBY=OFF \
 #            ../SimpleITK/SuperBuild && \
-#     make -j $N_CPUS && \
+#     make -j $N_CPUS
 #
 # RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 
@@ -163,7 +163,7 @@ RUN ["chsh", "-s", "/bin/bash"]
 
 RUN \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    echo "addapath $HOME/abin" >> $BASHRC
+    echo "addpath $HOME/abin" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ RUN \
 
 RUN \
     echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC && \
-    echo "addapath $ANTSPATH" >> $BASHRC
+    echo "addpath $ANTSPATH" >> $BASHRC
 
 RUN ldconfig
 
@@ -201,10 +201,11 @@ RUN \
     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
     mkdir build && \
     cd build && \
-    cmake -DITK_DIR=$HOME/ants/build/ITKv4-build && \
+    cmake -DITK_DIR=$HOME/ants/build/ITKv4-build \
+          ../PETPVC && \
     make -j $N_CPUS
 
-RUN echo "addapath $HOME/petpvc/build/src" >> $BASHRC
+RUN echo "addpath $HOME/petpvc/build/src" >> $BASHRC
 
 
 RUN ldconfig
@@ -218,7 +219,7 @@ RUN \
 
 RUN \
     echo "export MANPATH=$HOME/camino/man:$MANPATH" >> $BASHRC && \
-    echo "addapath $HOME/camino/bin" >> $BASHRC
+    echo "addpath $HOME/camino/bin" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # FSL (http://fsl.fmrib.ox.ac.uk)

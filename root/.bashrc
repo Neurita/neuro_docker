@@ -46,7 +46,7 @@ source $HOME/.scripts/git-completion.sh
 source $HOME/.scripts/z.sh
 
 # helper functions
-addapath() {
+addpath() {
     if [ -e $1 ]; then
         export PATH=$PATH:$1
     fi
