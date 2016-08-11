@@ -74,6 +74,7 @@ RUN \
 RUN apt-get -y build-dep vtk6
 
 RUN \
+    cd $HOME && \
     mkdir vtk && \
     cd vtk && \
     git clone $VTK_GIT -b $VTK_VERSION VTK && \
@@ -85,8 +86,7 @@ RUN \
           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
           ../VTK && \
     make -j $N_CPUS && \
-    make install && \
-    cd ../..
+    make install
 
 RUN ldconfig
 
@@ -95,6 +95,7 @@ RUN ldconfig
 # ITK
 #-------------------------------------------------------------------------------
 # RUN \
+#     cd $HOME && \
 #     mkdir itk && \
 #     cd itk && \
 #     git clone $ITK_GIT -b $ITK_VERSION && \
@@ -106,8 +107,7 @@ RUN ldconfig
     #       -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
 #           ../ITK && \
 #     make -j $N_CPUS && \
-#     make install && \
-#     cd ../..
+#     make install
 
 # RUN \
 #   echo "addlibpath $pwd/itk/build/lib" >> $BASHRC && \
@@ -120,6 +120,7 @@ RUN ldconfig
 # SimpleITK
 #-------------------------------------------------------------------------------
 # RUN \
+#     cd $HOME && \
 #     mkdir simpleitk && \
 #     cd simpleitk && \
 #     git clone --recursive $SIMPLEITK_GIT -b $SIMPLEITK_VERSION && \
@@ -135,7 +136,6 @@ RUN ldconfig
 #            -DWRAP_RUBY=OFF \
 #            ../SimpleITK/SuperBuild && \
 #     make -j $N_CPUS && \
-#     cd ../..
 #
 # RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
 
@@ -145,6 +145,7 @@ RUN ldconfig
 # https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
 #-------------------------------------------------------------------------------
 RUN \
+    cd $HOME && \
     apt-get install -y tcsh xfonts-base python-qt4  && \
     apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
@@ -169,6 +170,7 @@ RUN \
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
 RUN \
+    cd $HOME && \
     mkdir ants && \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
@@ -181,9 +183,7 @@ RUN \
           -DUSE_SYSTEM_VTK=ON \
           -DVTK_DIR=$HOME/vtk/build \
           ../ANTs && \
-    make -j $N_CPUS && \
-    make install && \
-    cd ../..
+    make -j $N_CPUS
 
 RUN \
     echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC && \
@@ -195,14 +195,14 @@ RUN ldconfig
 # PETPVC (https://github.com/UCL/PETPVC)
 #-------------------------------------------------------------------------------
 RUN \
+    cd $HOME && \
     mkdir petpvc && \
     cd petpvc && \
     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
     mkdir build && \
     cd build && \
     cmake -DITK_DIR=$HOME/ants/build/ITKv4-build && \
-    make -j $N_CPUS && \
-    cd ../..; \
+    make -j $N_CPUS
 
 RUN echo "addapath $HOME/petpvc/build/src" >> $BASHRC
 
@@ -213,6 +213,7 @@ RUN ldconfig
 # Camino (http://camino.cs.ucl.ac.uk/)
 #-------------------------------------------------------------------------------
 RUN \
+    cd $HOME && \
     git clone $CAMINO_GIT camino
 
 RUN \
