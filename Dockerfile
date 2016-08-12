@@ -58,6 +58,7 @@ ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
 ADD root/.nipype /root/.nipype
 ADD patches /root/patches
+ADD root/pypes_requirements.txt /root/pypes_requirements.txt
 
 # Define working directory.
 WORKDIR /root
@@ -285,7 +286,7 @@ RUN \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
     source $WORKON_HOME/$PYENV_NAME/bin/activate && \
-    pip install -r root/pypes_requirements.txt
+    pip install -r $HOME/pypes_requirements.txt
 
 RUN \
     echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
