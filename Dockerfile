@@ -167,94 +167,94 @@ RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 # RUN echo "addlibpath $SOFT/simpleitk/build/lib" >> $BASHRC
 
 
-# #-------------------------------------------------------------------------------
-# # AFNI
-# # https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
-# #-------------------------------------------------------------------------------
-# RUN \
-#     cd $SOFT && \
-#     apt-get install -y tcsh xfonts-base python-qt4  && \
-#     apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
-#     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
-#     apt-get update && \
-#     ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
-#     wget -c $LIBXP_URL && \
-#     dpkg -i `basename $LIBXP_URL` && \
-#     apt-get install -f
-#
-# RUN curl -O $AFNI_URL
-#
-# RUN ["chsh", "-s", "/usr/bin/tcsh"]
-# RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"]
-# RUN ["chsh", "-s", "/bin/bash"]
-#
-# RUN \
-#     cp $(pwd)/AFNI.afnirc $HOME/.afnirc && \
-#     echo "addpath $SOFT/abin" >> $BASHRC
-#
-#
-# #-------------------------------------------------------------------------------
-# # ANTS (https://github.com/stnava/ANTs)
-# #-------------------------------------------------------------------------------
-# RUN \
-#     cd $SOFT && \
-#     mkdir ants && \
-#     cd ants && \
-#     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
-#     cd ANTs && \
-#     git apply /root/patches/ANTs/0001-fix-ifstream-error.patch && \
-#     cd .. && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DUSE_VTK=ON \
-#           -DUSE_SYSTEM_VTK=ON \
-#           -DVTK_DIR=$HOME/vtk/build \
-#           ../ANTs && \
-#     make -j $N_CPUS
-#
-# RUN \
-#     echo "export ANTSPATH=${SOFT}/ants/build/bin" >> $BASHRC && \
-#     echo "addpath $ANTSPATH" >> $BASHRC
-#
-# RUN ldconfig
-#
-# #-------------------------------------------------------------------------------
-# # PETPVC (https://github.com/UCL/PETPVC)
-# #-------------------------------------------------------------------------------
-# RUN \
-#     cd $SOFT && \
-#     mkdir petpvc && \
-#     cd petpvc && \
-#     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DITK_DIR=$HOME/ants/build/ITKv4-build \
-#           ../PETPVC && \
-#     make -j $N_CPUS
-#
-# RUN echo "addpath ${SOFT}/petpvc/build/src" >> $BASHRC
-#
-#
-# RUN ldconfig
-#
-# #-------------------------------------------------------------------------------
-# # Camino (http://camino.cs.ucl.ac.uk/)
-# #-------------------------------------------------------------------------------
-# RUN \
-#     cd $SOFT && \
-#     git clone $CAMINO_GIT camino
-#
-# RUN \
-#     echo "export MANPATH=${SOFT}/camino/man:$MANPATH" >> $BASHRC && \
-#     echo "addpath ${SOFT}/camino/bin" >> $BASHRC
-#
-# #-------------------------------------------------------------------------------
-# # FSL (http://fsl.fmrib.ox.ac.uk)
-# #-------------------------------------------------------------------------------
-# RUN \
-#     apt-get install -y fsl-complete && \
-#     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
-#     echo "export FSLPARALLEL=condor" >> $BASHRC
+#-------------------------------------------------------------------------------
+# AFNI
+# https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
+#-------------------------------------------------------------------------------
+RUN \
+    cd $SOFT && \
+    apt-get install -y tcsh xfonts-base python-qt4  && \
+    apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
+    apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
+    apt-get update && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
+    wget -c $LIBXP_URL && \
+    dpkg -i `basename $LIBXP_URL` && \
+    apt-get install -f
+
+RUN curl -O $AFNI_URL
+
+RUN ["chsh", "-s", "/usr/bin/tcsh"]
+RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"]
+RUN ["chsh", "-s", "/bin/bash"]
+
+RUN \
+    cp $(pwd)/AFNI.afnirc $HOME/.afnirc && \
+    echo "addpath $SOFT/abin" >> $BASHRC
+
+
+#-------------------------------------------------------------------------------
+# ANTS (https://github.com/stnava/ANTs)
+#-------------------------------------------------------------------------------
+RUN \
+    cd $SOFT && \
+    mkdir ants && \
+    cd ants && \
+    git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
+    cd ANTs && \
+    git apply /root/patches/ANTs/0001-fix-ifstream-error.patch && \
+    cd .. && \
+    mkdir build && \
+    cd build && \
+    cmake -DUSE_VTK=ON \
+          -DUSE_SYSTEM_VTK=ON \
+          -DVTK_DIR=$HOME/vtk/build \
+          ../ANTs && \
+    make -j $N_CPUS
+
+RUN \
+    echo "export ANTSPATH=${SOFT}/ants/build/bin" >> $BASHRC && \
+    echo "addpath $ANTSPATH" >> $BASHRC
+
+RUN ldconfig
+
+#-------------------------------------------------------------------------------
+# PETPVC (https://github.com/UCL/PETPVC)
+#-------------------------------------------------------------------------------
+RUN \
+    cd $SOFT && \
+    mkdir petpvc && \
+    cd petpvc && \
+    git clone $PETPVC_GIT -b $PETPVC_VERSION && \
+    mkdir build && \
+    cd build && \
+    cmake -DITK_DIR=$HOME/ants/build/ITKv4-build \
+          ../PETPVC && \
+    make -j $N_CPUS
+
+RUN echo "addpath ${SOFT}/petpvc/build/src" >> $BASHRC
+
+
+RUN ldconfig
+
+#-------------------------------------------------------------------------------
+# Camino (http://camino.cs.ucl.ac.uk/)
+#-------------------------------------------------------------------------------
+RUN \
+    cd $SOFT && \
+    git clone $CAMINO_GIT camino
+
+RUN \
+    echo "export MANPATH=${SOFT}/camino/man:$MANPATH" >> $BASHRC && \
+    echo "addpath ${SOFT}/camino/bin" >> $BASHRC
+
+#-------------------------------------------------------------------------------
+# FSL (http://fsl.fmrib.ox.ac.uk)
+#-------------------------------------------------------------------------------
+RUN \
+    apt-get install -y fsl-complete && \
+    echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
+    echo "export FSLPARALLEL=condor" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
@@ -294,19 +294,19 @@ RUN \
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
-# RUN \
-#     pip3 instal -U pip setuptools virtualenvwrapper && \
-#     source /usr/local/bin/virtualenvwrapper.sh && \
-#     mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
-#     pip install -r root/pypes_requirements.txt
-#
-# ENV WORKON_HOME $HOME/pyenvs
-#
-# RUN \
-#     echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
-#     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
-#     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
-#     echo "workon $PYENV_NAME" >> $BASHRC
+RUN \
+    pip3 instal -U pip setuptools virtualenvwrapper && \
+    source /usr/local/bin/virtualenvwrapper.sh && \
+    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
+    pip install -r root/pypes_requirements.txt
+
+ENV WORKON_HOME $HOME/pyenvs
+
+RUN \
+    echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
+    echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
+    echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
+    echo "workon $PYENV_NAME" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # CLEANUP
