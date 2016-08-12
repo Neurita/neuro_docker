@@ -22,15 +22,6 @@ ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
 ENV ANTS_GIT https://github.com/stnava/ANTs.git
 ENV PYENV_NAME pytre
 
-# ------------------------------------------------------------------------------
-# Matlab parameters, this will most likely need a rewrite for every case.
-# ------------------------------------------------------------------------------
-ENV MATLAB_HOST_DIR soft/matlab/R2015b
-ENV SPM_HOST_DIR soft/matlab_tools/spm12
-
-ENV MATLAB_DIR /root/soft/matlab/R2015b
-ENV SPM_DIR /root/soft/matlab_tools/spm
-
 # Install.
 RUN \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
@@ -67,9 +58,6 @@ ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
 ADD root/.nipype /root/.nipype
 ADD patches /root/patches
-
-#ADD $MATLAB_HOST_DIR $MATLAB_DIR
-#ADD $SPM_HOST_DIR $SPM_DIR
 
 # Define working directory.
 WORKDIR /root
@@ -276,7 +264,6 @@ ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script"
 ENV FORCE_SPMMCR 1
 
 RUN \
-
     echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script'" >> $BASHRC && \
     echo "export FORCE_SPMMCR=1" >> $BASHRC && \
     echo "addlibpath /opt/mcr/v85/runtime/glnxa64" >> $BASHRC && \
@@ -287,11 +274,6 @@ RUN \
 RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip -o spm12.zip && \
     unzip spm12.zip && \
     rm -rf spm12.zip
-
-
-RUN \
-    echo "export MATLAB_DIR=${MATLAB_DIR}" >> $BASHRC  && \
-    echo "addpath ${MATLAB_DIR}/bin" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
