@@ -24,9 +24,11 @@ ENV PYENV_NAME pytre
 # ------------------------------------------------------------------------------
 # Matlab parameters, this will most likely need a rewrite for every case.
 # ------------------------------------------------------------------------------
-ENV MATLAB_DIR /opt/matlab/R2015b
-ENV SPM_DIR ~/Software/matlab_tools/spm12
+ENV MATLAB_HOST_DIR soft/matlab/R2015b
+ENV SPM_HOST_DIR soft/matlab_tools/spm12
 
+ENV MATLAB_DIR /root/soft/matlab/R2015b
+ENV SPM_DIR /root/soft/matlab_tools/spm
 
 # Install.
 RUN \
@@ -37,22 +39,21 @@ RUN \
   apt-get install -y software-properties-common && \
   apt-get install -y byobu ssh curl git htop man unzip vim wget
 
+EXPOSE 22
+
+# Set environment variables.
+ENV HOME /root
+ENV SOFT $HOME/soft
+ENV BASHRC $HOME/.bashrc
+
 # Add files.
 ADD root/.bashrc /root/.bashrc
 ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
 ADD patches /root/patches
 
-ADD $MATLAB_DIR /root/matlab
-ADD $SPM_DIR /root/matlab_tools/spm
-
-
-EXPOSE 22
-
-# Set environment variables.
-ENV HOME /root
-ENV SOFT $HOME
-ENV BASHRC $HOME/.bashrc
+ADD $MATLAB_HOST_DIR $MATLAB_DIR
+ADD $SPM_HOST_DIR $SPM_DIR
 
 # Define working directory.
 WORKDIR /root
@@ -78,6 +79,8 @@ RUN \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     apt-get update
 
+# define a variable for the path where the software is installed
+RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
@@ -85,7 +88,7 @@ RUN \
 RUN apt-get -y build-dep vtk6
 
 RUN \
-    cd $HOME && \
+    cd $SOFT && \
     mkdir vtk && \
     cd vtk && \
     git clone $VTK_GIT -b $VTK_VERSION VTK && \
@@ -106,7 +109,7 @@ RUN ldconfig
 # ITK
 #-------------------------------------------------------------------------------
 # RUN \
-#     cd $HOME && \
+#     cd $SOFT && \
 #     mkdir itk && \
 #     cd itk && \
 #     git clone $ITK_GIT -b $ITK_VERSION && \
@@ -131,7 +134,7 @@ RUN ldconfig
 # SimpleITK
 #-------------------------------------------------------------------------------
 # RUN \
-#     cd $HOME && \
+#     cd $SOFT && \
 #     mkdir simpleitk && \
 #     cd simpleitk && \
 #     git clone --recursive $SIMPLEITK_GIT -b $SIMPLEITK_VERSION && \
@@ -148,7 +151,7 @@ RUN ldconfig
 #            ../SimpleITK/SuperBuild && \
 #     make -j $N_CPUS
 #
-# RUN echo "addlibpath $pwd/simpleitk/build/lib" >> $BASHRC
+# RUN echo "addlibpath $(pwd)/simpleitk/build/lib" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
@@ -156,7 +159,7 @@ RUN ldconfig
 # https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
 #-------------------------------------------------------------------------------
 RUN \
-    cd $HOME && \
+    cd $SOFT && \
     apt-get install -y tcsh xfonts-base python-qt4  && \
     apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
@@ -173,15 +176,15 @@ RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras
 RUN ["chsh", "-s", "/bin/bash"]
 
 RUN \
-    cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    echo "addpath $HOME/abin" >> $BASHRC
+    cp $(pwd)/AFNI.afnirc $HOME/.afnirc && \
+    echo "addpath $(pwd)/abin" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
 RUN \
-    cd $HOME && \
+    cd $SOFT && \
     mkdir ants && \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
@@ -197,7 +200,7 @@ RUN \
     make -j $N_CPUS
 
 RUN \
-    echo "export ANTSPATH=${HOME}/ants/build/bin" >> $BASHRC && \
+    echo "export ANTSPATH=${SOFT}/ants/build/bin" >> $BASHRC && \
     echo "addpath $ANTSPATH" >> $BASHRC
 
 RUN ldconfig
@@ -206,7 +209,7 @@ RUN ldconfig
 # PETPVC (https://github.com/UCL/PETPVC)
 #-------------------------------------------------------------------------------
 RUN \
-    cd $HOME && \
+    cd $SOFT && \
     mkdir petpvc && \
     cd petpvc && \
     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
@@ -216,7 +219,7 @@ RUN \
           ../PETPVC && \
     make -j $N_CPUS
 
-RUN echo "addpath $HOME/petpvc/build/src" >> $BASHRC
+RUN echo "addpath ${SOFT}/petpvc/build/src" >> $BASHRC
 
 
 RUN ldconfig
@@ -225,12 +228,12 @@ RUN ldconfig
 # Camino (http://camino.cs.ucl.ac.uk/)
 #-------------------------------------------------------------------------------
 RUN \
-    cd $HOME && \
+    cd $SOFT && \
     git clone $CAMINO_GIT camino
 
 RUN \
-    echo "export MANPATH=$HOME/camino/man:$MANPATH" >> $BASHRC && \
-    echo "addpath $HOME/camino/bin" >> $BASHRC
+    echo "export MANPATH=${SOFT}/camino/man:$MANPATH" >> $BASHRC && \
+    echo "addpath ${SOFT}/camino/bin" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # FSL (http://fsl.fmrib.ox.ac.uk)
@@ -243,9 +246,11 @@ RUN \
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
 #-------------------------------------------------------------------------------
+ENV MATLAB_DIR
 
 RUN \
-    echo "addpath /root/matlab/bin" >> $BASHRC
+    echo "export MATLAB_DIR=${MATLAB_DIR}" >> $BASHRC  && \
+    echo "addpath ${MATLAB_DIR}/bin" >> $BASHRC  && \
 
 
 #-------------------------------------------------------------------------------
