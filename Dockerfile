@@ -21,6 +21,13 @@ ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
 ENV ANTS_GIT https://github.com/stnava/ANTs.git
 ENV PYENV_NAME pytre
 
+# ------------------------------------------------------------------------------
+# Matlab parameters, this will most likely need a rewrite for every case.
+# ------------------------------------------------------------------------------
+ENV MATLAB_DIR /opt/matlab/R2015b
+ENV SPM_DIR ~/Software/matlab_tools/spm12
+
+
 # Install.
 RUN \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
@@ -35,6 +42,10 @@ ADD root/.bashrc /root/.bashrc
 ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
 ADD patches /root/patches
+
+ADD $MATLAB_DIR /root/matlab
+ADD $SPM_DIR /root/matlab_tools/spm
+
 
 EXPOSE 22
 
@@ -230,10 +241,18 @@ RUN \
     echo "export FSLPARALLEL=condor" >> $BASHRC
 
 #-------------------------------------------------------------------------------
+# MATLAB and toolboxes
+#-------------------------------------------------------------------------------
+
+RUN \
+    echo "addpath /root/matlab/bin" >> $BASHRC
+
+
+#-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
 RUN \
-    pip instal virtualenvwrapper && \
+    pip3 instal -U pip setuptools virtualenvwrapper && \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
     pip install -r root/pypes_requirements.txt
