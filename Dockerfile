@@ -65,6 +65,7 @@ ENV BASHRC /root/.bashrc
 ADD root/.bashrc $BASHRC
 ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
+ADD root/.nipype /root/.nipype
 ADD patches /root/patches
 
 #ADD $MATLAB_HOST_DIR $MATLAB_DIR
