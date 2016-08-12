@@ -283,17 +283,15 @@ RUN \
     export VIRTUALENVWRAPPER_PYTHON=`which python3` && \
     export WORKON_HOME=$HOME/pyenvs && \
     source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME
+    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
+    source $WORKON_HOME/$PYENV_NAME/bin/activate && \
+    pip install -r root/pypes_requirements.txt
 
 RUN \
     echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
     echo "workon $PYENV_NAME" >> $BASHRC
-
-RUN \
-    source $WORKON_HOME/$PYENV_NAME/bin/activate && \
-    pip install -r root/pypes_requirements.txt
 
 #-------------------------------------------------------------------------------
 # CLEANUP
