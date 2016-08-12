@@ -85,27 +85,27 @@ RUN \
     mkdir $SOFT && \
     echo "export SOFT=$HOME/soft" >> $BASHRC
 
-# #-------------------------------------------------------------------------------
-# # VTK (http://www.vtk.org)
-# #-------------------------------------------------------------------------------
-# RUN apt-get -y build-dep vtk6
-#
-# RUN \
-#     cd $SOFT && \
-#     mkdir vtk && \
-#     cd vtk && \
-#     git clone $VTK_GIT -b $VTK_VERSION VTK && \
-#     mkdir build && \
-#     cd build && \
-#     cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
-#           -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
-#           -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python2.7m \
-#           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
-#           ../VTK && \
-#     make -j $N_CPUS && \
-#     make install
-#
-# RUN ldconfig
+#-------------------------------------------------------------------------------
+# VTK (http://www.vtk.org)
+#-------------------------------------------------------------------------------
+RUN apt-get -y build-dep vtk6
+
+RUN \
+    cd $SOFT && \
+    mkdir vtk && \
+    cd vtk && \
+    git clone $VTK_GIT -b $VTK_VERSION VTK && \
+    mkdir build && \
+    cd build && \
+    cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
+          -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
+          -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python2.7m \
+          -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
+          ../VTK && \
+    make -j $N_CPUS && \
+    make install
+
+RUN ldconfig
 
 
 #-------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ RUN \
     cd build && \
     cmake -DUSE_VTK=ON \
           -DUSE_SYSTEM_VTK=ON \
-          -DVTK_DIR=$HOME/vtk/build \
+          -DVTK_DIR=$SOFT/vtk/build \
           ../ANTs && \
     make -j $N_CPUS
 
