@@ -316,3 +316,5 @@ RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
 # source .bashrc
 #-------------------------------------------------------------------------------
 RUN source $BASHRC
+
+CMD ["/bin/bash"]
