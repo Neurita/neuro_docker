@@ -93,7 +93,9 @@ RUN \
     apt-get update
 
 # define a variable for the path where the software is installed
-RUN echo "export SOFT=$HOME/soft" >> $BASHRC
+RUN \
+    mkdir $SOFT && \
+    echo "export SOFT=$HOME/soft" >> $BASHRC
 
 # #-------------------------------------------------------------------------------
 # # VTK (http://www.vtk.org)
