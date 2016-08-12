@@ -246,8 +246,6 @@ RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
 #-------------------------------------------------------------------------------
-ENV MATLAB_DIR
-
 RUN \
     echo "export MATLAB_DIR=${MATLAB_DIR}" >> $BASHRC  && \
     echo "addpath ${MATLAB_DIR}/bin" >> $BASHRC  && \
