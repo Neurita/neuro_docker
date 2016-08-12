@@ -275,6 +275,11 @@ RUN echo "destinationFolder=/opt/mcr" > mcr_options.txt && \
 ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script"
 ENV FORCE_SPMMCR 1
 
+RUN \
+    echo "addlibpath /opt/mcr/v85/runtime/glnxa64" >> $BASHRC && \
+    echo "addlibpath /opt/mcr/v85/bin/glnxa64" >> $BASHRC && \
+    echo "addlibpath /opt/mcr/v85/sys/os/glnxa64" >> $BASHRC
+
 # Install SPM
 RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip -o spm12.zip && \
     unzip spm12.zip && \
@@ -283,7 +288,7 @@ RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/sp
 
 RUN \
     echo "export MATLAB_DIR=${MATLAB_DIR}" >> $BASHRC  && \
-    echo "addpath ${MATLAB_DIR}/bin" >> $BASHRC  && \
+    echo "addpath ${MATLAB_DIR}/bin" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
