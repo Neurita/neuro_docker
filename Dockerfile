@@ -58,11 +58,11 @@ EXPOSE 22
 
 # Set environment variables.
 ENV HOME /root
-ENV SOFT $HOME/soft
-ENV BASHRC $HOME/.bashrc
+ENV SOFT /root/soft
+ENV BASHRC /root/.bashrc
 
 # Add files.
-ADD root/.bashrc /root/.bashrc
+ADD root/.bashrc $BASHRC
 ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
 ADD patches /root/patches
@@ -72,9 +72,6 @@ ADD patches /root/patches
 
 # Define working directory.
 WORKDIR /root
-
-# Define default command.
-CMD ["bash"]
 
 # Python
 RUN apt-get install -y python3-dev python3-pip python3-virtualenv
@@ -276,6 +273,9 @@ ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script"
 ENV FORCE_SPMMCR 1
 
 RUN \
+
+    echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script'" >> $BASHRC && \
+    echo "export FORCE_SPMMCR=1" >> $BASHRC && \
     echo "addlibpath /opt/mcr/v85/runtime/glnxa64" >> $BASHRC && \
     echo "addlibpath /opt/mcr/v85/bin/glnxa64" >> $BASHRC && \
     echo "addlibpath /opt/mcr/v85/sys/os/glnxa64" >> $BASHRC
@@ -308,7 +308,11 @@ RUN \
 #     echo "workon $PYENV_NAME" >> $BASHRC
 
 #-------------------------------------------------------------------------------
-# source .bashrc
-#RUN source $BASHRC
+# CLEANUP
+#-------------------------------------------------------------------------------
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
 
-CMD ["/bin/bash"]
+#-------------------------------------------------------------------------------
+# source .bashrc
+#-------------------------------------------------------------------------------
+RUN source $BASHRC
