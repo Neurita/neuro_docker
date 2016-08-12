@@ -279,7 +279,7 @@ RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/sp
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
 RUN \
-    pip3 instal -U pip setuptools virtualenvwrapper && \
+    pip3 install -U pip setuptools virtualenvwrapper && \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
     pip install -r root/pypes_requirements.txt
