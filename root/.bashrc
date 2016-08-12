@@ -50,7 +50,7 @@ addpath() {
     if [ -e $1 ]; then
         export PATH=$PATH:$1
     fi
-    }
+}
 
 addlibpath() {
     if [ -e $1 ]; then

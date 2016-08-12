@@ -1,5 +1,6 @@
 
 FROM ubuntu:16.04
+RUN ln -snf /bin/bash /bin/sh
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
 ENV PETPVC_VERSION master
@@ -37,7 +38,21 @@ RUN \
   apt-get -y upgrade && \
   apt-get install -y build-essential && \
   apt-get install -y software-properties-common && \
-  apt-get install -y byobu ssh curl git htop man unzip vim wget
+  apt-get install -y byobu \
+                     ssh \
+                     curl \
+                     git \
+                     htop \
+                     man \
+                     unzip \
+                     vim \
+                     wget \
+                     xvfb \
+                     bzip2 \
+                     unzip \
+                     apt-utils \
+                     fusefat \
+                     graphviz
 
 EXPOSE 22
 
@@ -52,8 +67,8 @@ ADD root/.gitconfig /root/.gitconfig
 ADD root/.scripts /root/.scripts
 ADD patches /root/patches
 
-ADD $MATLAB_HOST_DIR $MATLAB_DIR
-ADD $SPM_HOST_DIR $SPM_DIR
+#ADD $MATLAB_HOST_DIR $MATLAB_DIR
+#ADD $SPM_HOST_DIR $SPM_DIR
 
 # Define working directory.
 WORKDIR /root
@@ -124,8 +139,8 @@ RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 #     make install
 
 # RUN \
-#   echo "addlibpath $pwd/itk/build/lib" >> $BASHRC && \
-#   echo "addpath $pwd/itk/build/bin" >> $BASHRC
+#   echo "addlibpath $SOFT/itk/build/lib" >> $BASHRC && \
+#   echo "addpath $SOFT/itk/build/bin" >> $BASHRC
 
 # RUN ldconfig
 
@@ -151,7 +166,7 @@ RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 #            ../SimpleITK/SuperBuild && \
 #     make -j $N_CPUS
 #
-# RUN echo "addlibpath $(pwd)/simpleitk/build/lib" >> $BASHRC
+# RUN echo "addlibpath $SOFT/simpleitk/build/lib" >> $BASHRC
 
 
 # #-------------------------------------------------------------------------------
@@ -177,7 +192,7 @@ RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 #
 # RUN \
 #     cp $(pwd)/AFNI.afnirc $HOME/.afnirc && \
-#     echo "addpath $(pwd)/abin" >> $BASHRC
+#     echo "addpath $SOFT/abin" >> $BASHRC
 #
 #
 # #-------------------------------------------------------------------------------
@@ -246,6 +261,26 @@ RUN echo "export SOFT=$HOME/soft" >> $BASHRC
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
 #-------------------------------------------------------------------------------
+RUN echo "destinationFolder=/opt/mcr" > mcr_options.txt && \
+    echo "agreeToLicense=yes" >> mcr_options.txt && \
+    echo "outputFile=/tmp/matlabinstall_log" >> mcr_options.txt && \
+    echo "mode=silent" >> mcr_options.txt && \
+    mkdir -p matlab_installer && \
+    curl -sSL http://www.mathworks.com/supportfiles/downloads/R2015a/deployment_files/R2015a/installers/glnxa64/MCR_R2015a_glnxa64_installer.zip \
+         -o matlab_installer/installer.zip && \
+    unzip matlab_installer/installer.zip -d matlab_installer/ && \
+    matlab_installer/install -inputFile mcr_options.txt && \
+    rm -rf matlab_installer mcr_options.txt
+
+ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script"
+ENV FORCE_SPMMCR 1
+
+# Install SPM
+RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip -o spm12.zip && \
+    unzip spm12.zip && \
+    rm -rf spm12.zip
+
+
 RUN \
     echo "export MATLAB_DIR=${MATLAB_DIR}" >> $BASHRC  && \
     echo "addpath ${MATLAB_DIR}/bin" >> $BASHRC  && \
@@ -269,6 +304,6 @@ RUN \
 
 #-------------------------------------------------------------------------------
 # source .bashrc
-RUN source $BASHRC
+#RUN source $BASHRC
 
-RUN matlab
+CMD ["/bin/bash"]
