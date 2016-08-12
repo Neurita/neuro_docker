@@ -179,7 +179,7 @@ RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras
 RUN ["chsh", "-s", "/bin/bash"]
 
 RUN \
-    cp $SOFT/abin/AFNI.afnirc $HOME/.afnirc && \
+    cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
     echo "addpath $SOFT/abin" >> $BASHRC
 
 
