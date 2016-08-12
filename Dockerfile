@@ -280,9 +280,9 @@ RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/sp
 #-------------------------------------------------------------------------------
 RUN \
     pip3 install -U pip setuptools virtualenvwrapper && \
+    export VIRTUALENVWRAPPER_PYTHON=`which python3` && \ 
     source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
-    pip install -r root/pypes_requirements.txt
+    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME
 
 ENV WORKON_HOME $HOME/pyenvs
 
@@ -291,6 +291,10 @@ RUN \
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
     echo "workon $PYENV_NAME" >> $BASHRC
+
+RUN \
+    workon $PYENV_NAME && \
+    pip install -r root/pypes_requirements.txt
 
 #-------------------------------------------------------------------------------
 # CLEANUP
