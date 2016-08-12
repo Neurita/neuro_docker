@@ -218,7 +218,7 @@ RUN \
     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
     mkdir build && \
     cd build && \
-    cmake -DITK_DIR=$HOME/ants/build/ITKv4-build \
+    cmake -DITK_DIR=$SOFT/ants/build/ITKv4-build \
           ../PETPVC && \
     make -j $N_CPUS
 
