@@ -269,10 +269,11 @@ ENV MCR_DIR $SOFT/mcr/v85
 
 RUN \
     echo "export MCR_DIR=$SOFT/mcr/v85"        >> $BASHRC && \
-    echo "addpath    $MCR_DIR/bin"             >> $BASHRC && \
-    echo "addlibpath $MCR_DIR/runtime/glnxa64" >> $BASHRC && \
-    echo "addlibpath $MCR_DIR/bin/glnxa64"     >> $BASHRC && \
-    echo "addlibpath $MCR_DIR/sys/os/glnxa64"  >> $BASHRC
+    echo "addpath    $MCR_DIR/bin"             >> $BASHRC
+    # if you do the following you will get different libc for your system.
+    #echo "addlibpath $MCR_DIR/runtime/glnxa64" >> $BASHRC && \
+    #echo "addlibpath $MCR_DIR/bin/glnxa64"     >> $BASHRC && \
+    #echo "addlibpath $MCR_DIR/sys/os/glnxa64"  >> $BASHRC
 
 # Install SPM
 RUN \
