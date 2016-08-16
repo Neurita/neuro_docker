@@ -290,8 +290,8 @@ RUN \
     source $WORKON_HOME/$PYENV_NAME/bin/activate
 
 RUN \
-    pip install cython
-    pip install numpy scipy
+    pip install cython && \
+    pip install numpy scipy && \
     pip install -r $HOME/pypes_requirements.txt
 
 RUN \
