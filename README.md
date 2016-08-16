@@ -5,9 +5,12 @@ This repository contains a **Dockerfile** of [Ubuntu](http://www.ubuntu.com/) fo
 
 It sets up [NeuroDebian](http://neuro.debian.net) and installs:
 - fsl-complete
+- AFNI
 - VTK and ITK
 - PETPVC
--
+- ANTs
+- SPM12 with MCR
+- Python and the NiPy tools
 
 ### Base Docker Image
 
