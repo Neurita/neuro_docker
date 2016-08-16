@@ -250,7 +250,11 @@ RUN \
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
 #-------------------------------------------------------------------------------
-RUN echo "destinationFolder=/opt/mcr" > mcr_options.txt && \
+ENV MCR_DIR $SOFT/mcr
+
+RUN \
+    cd $SOFT && \
+    echo "destinationFolder=$MCR_DIR" > mcr_options.txt && \
     echo "agreeToLicense=yes" >> mcr_options.txt && \
     echo "outputFile=/tmp/matlabinstall_log" >> mcr_options.txt && \
     echo "mode=silent" >> mcr_options.txt && \
@@ -261,20 +265,30 @@ RUN echo "destinationFolder=/opt/mcr" > mcr_options.txt && \
     matlab_installer/install -inputFile mcr_options.txt && \
     rm -rf matlab_installer mcr_options.txt
 
-ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script"
+ENV MCR_DIR $SOFT/mcr/v85
+
+RUN \
+    echo "export MCR_DIR=$SOFT/mcr/v85"
+    echo "addpath    $MCR_DIR/bin" >> $BASHRC && \
+    echo "addlibpath $MCR_DIR/runtime/glnxa64" >> $BASHRC && \
+    echo "addlibpath $MCR_DIR/bin/glnxa64"     >> $BASHRC && \
+    echo "addlibpath $MCR_DIR/sys/os/glnxa64"  >> $BASHRC
+
+# Install SPM
+RUN \
+    cd $SOFT && \
+    curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip -o spm12.zip && \
+    unzip spm12.zip && \
+    rm -rf spm12.zip
+
+ENV SPM_DIR $SOFT/spm12
+ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh $MCR_DIR script"
 ENV FORCE_SPMMCR 1
 
 RUN \
-    echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh /opt/mcr/v85/ script'" >> $BASHRC && \
-    echo "export FORCE_SPMMCR=1" >> $BASHRC && \
-    echo "addlibpath /opt/mcr/v85/runtime/glnxa64" >> $BASHRC && \
-    echo "addlibpath /opt/mcr/v85/bin/glnxa64" >> $BASHRC && \
-    echo "addlibpath /opt/mcr/v85/sys/os/glnxa64" >> $BASHRC
-
-# Install SPM
-RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip -o spm12.zip && \
-    unzip spm12.zip && \
-    rm -rf spm12.zip
+    echo "export SPM_DIR=$SOFT/spm12" >> $BASHRC && \
+    echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh $MCR_DIR script'" >> $BASHRC && \
+    echo "export FORCE_SPMMCR=1" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
@@ -295,9 +309,9 @@ RUN \
     pip install -r $HOME/pypes_requirements.txt
 
 RUN \
-    echo "VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
-    echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
+    echo "export VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
+    echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
     echo "workon $PYENV_NAME" >> $BASHRC
 
 #-------------------------------------------------------------------------------
