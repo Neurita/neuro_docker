@@ -6,6 +6,7 @@ nilearn==0.2.5
 nipype==0.12.0rc1
 nipy==0.4.0
 invoke==0.13.0
+ipython==5.1.0
 git+https://github.com/emre/kaptan.git@master#egg=kaptan
 git+https://github.com/moloney/dcmstack#egg=dcmstack
 git+https://github.com/darcymason/pydicom@master#egg=pydicom
