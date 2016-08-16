@@ -237,7 +237,7 @@ RUN \
 
 RUN \
     echo "export MANPATH=${SOFT}/camino/man:$MANPATH" >> $BASHRC && \
-    echo "addpath ${SOFT}/camino/bin" >> $BASHRC
+    echo "addpath ${SOFT}/camino/bin"                 >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # FSL (http://fsl.fmrib.ox.ac.uk)
@@ -245,7 +245,7 @@ RUN \
 RUN \
     apt-get install -y fsl-complete && \
     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
-    echo "export FSLPARALLEL=condor" >> $BASHRC
+    echo "export FSLPARALLEL=condor"  >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
@@ -268,8 +268,8 @@ RUN \
 ENV MCR_DIR $SOFT/mcr/v85
 
 RUN \
-    echo "export MCR_DIR=$SOFT/mcr/v85"
-    echo "addpath    $MCR_DIR/bin" >> $BASHRC && \
+    echo "export MCR_DIR=$SOFT/mcr/v85"        >> $BASHRC && \
+    echo "addpath    $MCR_DIR/bin"             >> $BASHRC && \
     echo "addlibpath $MCR_DIR/runtime/glnxa64" >> $BASHRC && \
     echo "addlibpath $MCR_DIR/bin/glnxa64"     >> $BASHRC && \
     echo "addlibpath $MCR_DIR/sys/os/glnxa64"  >> $BASHRC
@@ -286,9 +286,9 @@ ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh $MCR_DIR script"
 ENV FORCE_SPMMCR 1
 
 RUN \
-    echo "export SPM_DIR=$SOFT/spm12" >> $BASHRC && \
+    echo "export SPM_DIR=$SOFT/spm12"                               >> $BASHRC && \
     echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh $MCR_DIR script'" >> $BASHRC && \
-    echo "export FORCE_SPMMCR=1" >> $BASHRC
+    echo "export FORCE_SPMMCR=1"                                    >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
@@ -310,9 +310,9 @@ RUN \
 
 RUN \
     echo "export VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
-    echo "export WORKON_HOME=$HOME/pyenvs" >> $BASHRC && \
-    echo "source /usr/local/bin/virtualenvwrapper.sh" >> $BASHRC && \
-    echo "workon $PYENV_NAME" >> $BASHRC
+    echo "export WORKON_HOME=$HOME/pyenvs"                 >> $BASHRC && \
+    echo "source /usr/local/bin/virtualenvwrapper.sh"      >> $BASHRC && \
+    echo "workon $PYENV_NAME"                              >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # CLEANUP
