@@ -279,6 +279,8 @@ RUN curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/sp
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
+RUN apt-get install -y libxml2-dev libxslt1-dev
+
 RUN \
     pip3 install -U pip setuptools virtualenvwrapper && \
     export VIRTUALENVWRAPPER_PYTHON=`which python3` && \
@@ -286,6 +288,10 @@ RUN \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
     source $WORKON_HOME/$PYENV_NAME/bin/activate && \
+
+RUN \
+    pip install cython
+    pip install numpy scipy
     pip install -r $HOME/pypes_requirements.txt
 
 RUN \
