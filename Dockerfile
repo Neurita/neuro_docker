@@ -287,7 +287,7 @@ RUN \
     export WORKON_HOME=$HOME/pyenvs && \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
-    source $WORKON_HOME/$PYENV_NAME/bin/activate && \
+    source $WORKON_HOME/$PYENV_NAME/bin/activate
 
 RUN \
     pip install cython
