@@ -1,5 +1,6 @@
 numpy==1.11.1
 scipy==0.17.1
+scikit-learn==0.17.1
 nibabel==2.0.2
 hansel==0.9.1
 nilearn==0.2.5
