@@ -10,8 +10,8 @@ dipy==0.11.0
 invoke==0.13.0
 pandas==0.18.1
 ipython==5.1.0
-git+https://github.com/emre/kaptan.git@master#egg=kaptan
-git+https://github.com/moloney/dcmstack#egg=dcmstack
-git+https://github.com/darcymason/pydicom@master#egg=pydicom
-git+https://github.com/neurita/boyle@master#egg=boyle
-git+https://github.com/neurita/pypes@master#egg=pypes
+git+https://github.com/emre/kaptan.git@b64ad9b#egg=kaptan
+git+https://github.com/moloney/dcmstack@c12d27d#egg=dcmstack
+git+https://github.com/darcymason/pydicom@688216c#egg=pydicom
+git+https://github.com/neurita/boyle@4e8d82c#egg=boyle
+git+https://github.com/neurita/pypes@c131bc1#egg=pypes
