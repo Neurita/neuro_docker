@@ -8,10 +8,12 @@ VERSION="latest"
 # DATA BASE DIR
 # Note: this will be mounted in /data, make sure the file
 # path arguments reflext this.
-DATA_DIR=/home/alexandre/data
+DATA_DIR=/data
 
 # DOCKER_NAME
 DOCKER_NAME=dockerfile/neuro1
+
+HOSTNAME=neurodocker
 
 # Helper functions for guards
 error(){
@@ -31,7 +33,9 @@ check_cmd_in_path docker
 # Set up mounted volumes, environment, and run our containerized command
 docker run \
   --interactive --tty \
+  --hostname $HOSTNAME \
   --volume "$DATA_DIR":/data \
   --volume "$PWD":/wd \
   --workdir /wd \
-  "$DOCKER_NAME:$VERSION" /bin/bash -c "$@"
+  "$DOCKER_NAME:$VERSION" \
+  /bin/bash -c "source ~/.bashrc; $@"
