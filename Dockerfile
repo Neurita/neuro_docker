@@ -163,12 +163,14 @@ RUN ldconfig
 # https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
 #-------------------------------------------------------------------------------
 RUN \
-    cd $SOFT && \
     apt-get install -y tcsh xfonts-base python-qt4  && \
     apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
     apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
     apt-get update && \
-    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0
+
+RUN \
+    cd $SOFT && \
     wget -c $LIBXP_URL && \
     dpkg -i `basename $LIBXP_URL` && \
     apt-get install -f
@@ -181,7 +183,7 @@ RUN ["chsh", "-s", "/bin/bash"]
 
 RUN \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    echo "addpath $SOFT/abin" >> $BASHRC
+    echo "addpath $HOME/abin" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
