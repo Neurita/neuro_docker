@@ -98,7 +98,8 @@ RUN \
     git clone $VTK_GIT -b $VTK_VERSION VTK && \
     mkdir build && \
     cd build && \
-    cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
+    cmake -CMAKE_BUILD_TYPE=Release \
+          -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
           -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
           -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python2.7m \
           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
@@ -119,7 +120,8 @@ RUN ldconfig
 #     git clone $ITK_GIT -b $ITK_VERSION && \
 #     mkdir build && \
 #     cd build && \
-    # cmake -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
+    # cmake -CMAKE_BUILD_TYPE=Release \
+    #       -DPYTHON_EXECUTABLE=/usr/bin/python2.7 \
     #       -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 \
     #       -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python2.7m \
     #       -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
@@ -144,7 +146,7 @@ RUN ldconfig
 #     git clone --recursive $SIMPLEITK_GIT -b $SIMPLEITK_VERSION && \
 #     mkdir build && \
 #     cd build && \
-#     cmake \
+#     cmake  -CMAKE_BUILD_TYPE=Release \
 #            -DPYTHON_EXECUTABLE=/usr/bin/python3 \
 #            -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 \
 #            -DPYTHON_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/python3.5m \
@@ -199,7 +201,8 @@ RUN \
     cd .. && \
     mkdir build && \
     cd build && \
-    cmake -DUSE_VTK=ON \
+    cmake -CMAKE_BUILD_TYPE=Release \
+          -DUSE_VTK=ON \
           -DUSE_SYSTEM_VTK=ON \
           -DVTK_DIR=$SOFT/vtk/build \
           ../ANTs && \
@@ -221,7 +224,8 @@ RUN \
     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
     mkdir build && \
     cd build && \
-    cmake -DITK_DIR=$SOFT/ants/build/ITKv4-build \
+    cmake -CMAKE_BUILD_TYPE=Release \
+          -DITK_DIR=$SOFT/ants/build/ITKv4-build \
           ../PETPVC && \
     make -j $N_CPUS
 
