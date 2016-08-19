@@ -246,7 +246,7 @@ RUN \
 # FSL (http://fsl.fmrib.ox.ac.uk)
 #-------------------------------------------------------------------------------
 RUN \
-    apt-get install -y fsl-core fsl-atlases fsl-5.0-eddy-nonfree && \
+    apt-get install -y fsl-core fsl-atlases fsl-5.0-eddy-nonfree dicomnifti && \
     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
     echo "export FSLPARALLEL=condor"  >> $BASHRC
 
