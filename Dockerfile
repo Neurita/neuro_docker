@@ -212,8 +212,6 @@ RUN \
     echo "export ANTSPATH=${SOFT}/ants/build/bin" >> $BASHRC && \
     echo 'addpath $ANTSPATH' >> $BASHRC
 
-RUN ldconfig
-
 #-------------------------------------------------------------------------------
 # PETPVC (https://github.com/UCL/PETPVC)
 #-------------------------------------------------------------------------------
