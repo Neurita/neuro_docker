@@ -239,7 +239,7 @@ RUN \
     git clone $CAMINO_GIT camino
 
 RUN \
-    echo "export MANPATH=${SOFT}/camino/man:$MANPATH" >> $BASHRC && \
+    echo "export MANPATH=${SOFT}/camino/man:\$MANPATH" >> $BASHRC && \
     echo "addpath ${SOFT}/camino/bin"                 >> $BASHRC
 
 #-------------------------------------------------------------------------------
