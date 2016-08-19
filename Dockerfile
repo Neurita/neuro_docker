@@ -64,7 +64,7 @@ ADD root/pypes_requirements.txt /root/pypes_requirements.txt
 WORKDIR /root
 
 # Python
-RUN apt-get install -y python3-dev python3-pip python3-virtualenv
+RUN apt-get install -y python3-dev python3-pip python3-virtualenv python3-tk
 
 # Build tools
 RUN \
@@ -309,7 +309,7 @@ RUN \
     export VIRTUALENVWRAPPER_PYTHON=`which python3` && \
     export WORKON_HOME=$HOME/pyenvs && \
     source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv --no-site-packages -p /usr/bin/python3 $PYENV_NAME && \
+    mkvirtualenv -p /usr/bin/python3 $PYENV_NAME && \
     source $WORKON_HOME/$PYENV_NAME/bin/activate
 
 RUN \
