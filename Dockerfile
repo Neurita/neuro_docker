@@ -22,6 +22,15 @@ ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
 ENV ANTS_GIT https://github.com/stnava/ANTs.git
 ENV PYENV_NAME pytre
 
+## Configure default locale
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+    && locale-gen en_US.utf8 \
+    && /usr/sbin/update-locale LANG=en_US.UTF-8
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+
+
 # Install.
 RUN \
   sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
@@ -63,11 +72,9 @@ ADD root/pypes_requirements.txt /root/pypes_requirements.txt
 # Define working directory.
 WORKDIR /root
 
-# Python
-RUN apt-get install -y python3-dev python3-pip python3-virtualenv python3-tk
-
-# Build tools
+# Python & build-tools
 RUN \
+  apt-get install -y python3-dev python3-pip python3-virtualenv python3-tk && \
   apt-get install -y cmake gcc-4.9 g++-4.9 gfortran-4.9
 
 RUN \
@@ -75,9 +82,8 @@ RUN \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 
 # neurodebian
-RUN wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list
-
 RUN \
+    wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     apt-get update
 
@@ -106,8 +112,6 @@ RUN \
           ../VTK && \
     make -j $N_CPUS && \
     make install
-
-RUN ldconfig
 
 
 #-------------------------------------------------------------------------------
