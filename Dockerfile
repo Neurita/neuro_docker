@@ -23,36 +23,71 @@ ENV ANTS_GIT https://github.com/stnava/ANTs.git
 ENV PYENV_NAME pytre
 
 ## Configure default locale
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen en_US.utf8 \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen en_US.utf8 && \
+    /usr/sbin/update-locale LANG=en_US.UTF-8
 
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 
-# Install.
+# neurodebian and Install.
 RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu \
-                     ssh \
-                     curl \
-                     git \
-                     htop \
-                     man \
-                     unzip \
-                     vim \
-                     wget \
-                     xvfb \
-                     bzip2 \
-                     unzip \
-                     apt-utils \
-                     fusefat \
-                     graphviz
+    wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
+    apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
+    sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y build-essential && \
+    apt-get install -y software-properties-common && \
+    apt-get install -y \
+byobu \
+ssh \
+curl \
+git \
+htop \
+unzip \
+vim \
+wget \
+xvfb \
+bzip2 \
+unzip \
+apt-utils \
+fusefat \
+graphviz \
+cmake \
+gcc-4.9 \
+g++-4.9 \
+gfortran-4.9 \
+tcsh \
+xfonts-base \
+python-qt4 \
+libxm4 \
+libuil4 \
+libmrm4 \
+libmotif-common \
+libmotif-dev \
+motif-clients \
+gsl-bin \
+netpbm \
+gnome-tweak-tool \
+libjpeg62 \
+libxml2-dev \
+libxslt1-dev \
+mricron \
+dicomnifti \
+fsl-core \
+fsl-atlases \
+fsl-5.0-eddy-nonfree \
+python3-dev \
+python3-pip \
+python3-virtualenv \
+python3-tk && \
+    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0
+    apt-get -y build-dep vtk6 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
+    rm -rf /var/lib/apt/lists/*
 
 EXPOSE 22
 
@@ -72,21 +107,6 @@ ADD root/pypes_requirements.txt /root/pypes_requirements.txt
 # Define working directory.
 WORKDIR /root
 
-# Python & build-tools
-RUN \
-  apt-get install -y python3-dev python3-pip python3-virtualenv python3-tk && \
-  apt-get install -y cmake gcc-4.9 g++-4.9 gfortran-4.9
-
-RUN \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
-
-# neurodebian
-RUN \
-    wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
-    apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
-    apt-get update
-
 # define a variable for the path where the software is installed
 RUN \
     mkdir $SOFT && \
@@ -95,8 +115,6 @@ RUN \
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
 #-------------------------------------------------------------------------------
-RUN apt-get -y build-dep vtk6
-
 RUN \
     cd $SOFT && \
     mkdir vtk && \
@@ -112,7 +130,6 @@ RUN \
           ../VTK && \
     make -j $N_CPUS && \
     make install
-
 
 #-------------------------------------------------------------------------------
 # ITK
@@ -131,9 +148,7 @@ RUN \
     #       -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
 #           ../ITK && \
 #     make -j $N_CPUS && \
-#     make install
-
-# RUN \
+#     make install && \
 #   echo "addlibpath $SOFT/itk/build/lib" >> $BASHRC && \
 #   echo "addpath $SOFT/itk/build/bin" >> $BASHRC
 
@@ -159,9 +174,8 @@ RUN \
 #            -DWRAP_CSHARP=OFF \
 #            -DWRAP_RUBY=OFF \
 #            ../SimpleITK/SuperBuild && \
-#     make -j $N_CPUS
-#
-# RUN echo "addlibpath $SOFT/simpleitk/build/lib" >> $BASHRC
+#     make -j $N_CPUS && \
+#     echo "addlibpath $SOFT/simpleitk/build/lib" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
@@ -169,25 +183,14 @@ RUN \
 # https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
 #-------------------------------------------------------------------------------
 RUN \
-    apt-get install -y tcsh xfonts-base python-qt4  && \
-    apt-get install -y libxm4 libuil4 libmrm4 libmotif-common libmotif-dev motif-clients && \
-    apt-get install -y gsl-bin netpbm gnome-tweak-tool libjpeg62 && \
-    apt-get update && \
-    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0
-
-RUN \
     cd $SOFT && \
     wget -c $LIBXP_URL && \
     dpkg -i `basename $LIBXP_URL` && \
-    apt-get install -f
-
-RUN curl -O $AFNI_URL
-
-RUN ["chsh", "-s", "/usr/bin/tcsh"]
-RUN ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"]
-RUN ["chsh", "-s", "/bin/bash"]
-
-RUN \
+    apt-get install -f  && \
+    curl -O $AFNI_URL && \
+    ["chsh", "-s", "/usr/bin/tcsh"] && \
+    ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"] && \
+    ["chsh", "-s", "/bin/bash"] && \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
     echo "addpath $HOME/abin" >> $BASHRC
 
@@ -210,9 +213,7 @@ RUN \
           -DUSE_SYSTEM_VTK=ON \
           -DVTK_DIR=$SOFT/vtk/build \
           ../ANTs && \
-    make -j $N_CPUS
-
-RUN \
+    make -j $N_CPUS && \
     echo "export ANTSPATH=${SOFT}/ants/build/bin" >> $BASHRC && \
     echo 'addpath $ANTSPATH' >> $BASHRC
 
@@ -229,33 +230,21 @@ RUN \
     cmake -DCMAKE_BUILD_TYPE=Release \
           -DITK_DIR=$SOFT/ants/build/ITKv4-build \
           ../PETPVC && \
-    make -j $N_CPUS
-
-RUN echo "addpath ${SOFT}/petpvc/build/src" >> $BASHRC
+    make -j $N_CPUS && \
+    echo "addpath ${SOFT}/petpvc/build/src" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # Camino (http://camino.cs.ucl.ac.uk/)
 #-------------------------------------------------------------------------------
-RUN \
-    cd $SOFT && \
-    git clone $CAMINO_GIT camino
-
-RUN \
-    echo "export MANPATH=${SOFT}/camino/man:\$MANPATH" >> $BASHRC && \
-    echo "addpath ${SOFT}/camino/bin"                 >> $BASHRC
-
 #-------------------------------------------------------------------------------
 # FSL (http://fsl.fmrib.ox.ac.uk)
 #-------------------------------------------------------------------------------
 RUN \
-    apt-get install -y fsl-core fsl-atlases fsl-5.0-eddy-nonfree && \
+    cd $SOFT && \
+    git clone $CAMINO_GIT camino && \
+    echo "addpath ${SOFT}/camino/bin" >> $BASHRC && \
     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
     echo "export FSLPARALLEL=condor"  >> $BASHRC
-
-#-------------------------------------------------------------------------------
-# DICOM tools
-#-------------------------------------------------------------------------------
-RUN apt-get install -y mricron dicomnifti
 
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
@@ -273,68 +262,45 @@ RUN \
          -o matlab_installer/installer.zip && \
     unzip matlab_installer/installer.zip -d matlab_installer/ && \
     matlab_installer/install -inputFile mcr_options.txt && \
-    rm -rf matlab_installer mcr_options.txt
-
-ENV MCR_DIR $SOFT/mcr/v85
-
-RUN \
+    rm -rf matlab_installer mcr_options.txt && \
     echo "export MCR_DIR=$SOFT/mcr/v85" >> $BASHRC && \
-    echo "addpath $MCR_DIR/bin"         >> $BASHRC
-    # if you do the following you will get different libc for your system.
-    #echo "addlibpath $MCR_DIR/runtime/glnxa64" >> $BASHRC && \
-    #echo "addlibpath $MCR_DIR/bin/glnxa64"     >> $BASHRC && \
-    #echo "addlibpath $MCR_DIR/sys/os/glnxa64"  >> $BASHRC
-
-# Install SPM
-RUN \
+    echo "addpath $MCR_DIR/bin"         >> $BASHRC && \
     cd $SOFT && \
-    curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip -o spm12.zip && \
+    curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip \
+         -o spm12.zip && \
     unzip spm12.zip && \
-    rm -rf spm12.zip
-
-ENV SPM_DIR $SOFT/spm12
-ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh $MCR_DIR script"
-ENV FORCE_SPMMCR 1
-
-RUN \
+    rm -rf spm12.zip && \
     echo "export SPM_DIR=$SOFT/spm12"                               >> $BASHRC && \
     echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh $MCR_DIR script'" >> $BASHRC && \
     echo "export FORCE_SPMMCR=1"                                    >> $BASHRC
 
+ENV MCR_DIR $SOFT/mcr/v85
+ENV SPM_DIR $SOFT/spm12
+ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh $MCR_DIR script"
+ENV FORCE_SPMMCR 1
+
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
-RUN apt-get install -y libxml2-dev libxslt1-dev
-
 RUN \
     pip3 install -U pip setuptools virtualenvwrapper && \
     export VIRTUALENVWRAPPER_PYTHON=`which python3` && \
     export WORKON_HOME=$HOME/pyenvs && \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv -p /usr/bin/python3 $PYENV_NAME && \
-    source $WORKON_HOME/$PYENV_NAME/bin/activate
-
-RUN \
+    source $WORKON_HOME/$PYENV_NAME/bin/activate && \
     pip install cython && \
     pip install numpy scipy && \
-    pip install -r $HOME/pypes_requirements.txt
-
-RUN \
+    pip install -r $HOME/pypes_requirements.txt && \
     echo "export VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
     echo "export WORKON_HOME=$HOME/pyenvs"                 >> $BASHRC && \
     echo "source /usr/local/bin/virtualenvwrapper.sh"      >> $BASHRC && \
     echo "workon $PYENV_NAME"                              >> $BASHRC
 
 #-------------------------------------------------------------------------------
-# CLEANUP
-#-------------------------------------------------------------------------------
-# RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-#-------------------------------------------------------------------------------
 # source .bashrc
 #-------------------------------------------------------------------------------
-RUN source $BASHRC
-
-RUN ldconfig
+RUN source $BASHRC && \
+    ldconfig
 
 CMD ["/bin/bash"]
