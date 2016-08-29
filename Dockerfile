@@ -28,7 +28,14 @@ ENV PYENV_NAME pytre
 ## Configure default locale
 
 # Debian
-RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
+RUN apt-get update && \
+    apt-get -y install locales && \
+    dpkg-reconfigure locales && \
+    locale-gen C.UTF-8 && \
+    /usr/sbin/update-locale LANG=C.UTF-8 && \
+    echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
+    locale-gen
+ENV LC_ALL C.UTF-8 ENV LANG en_US.UTF-8 ENV LANGUAGE en_US.UTF-8 ENV TERM xterm
 
 # Ubuntu
 #RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
