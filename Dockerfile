@@ -57,7 +57,7 @@ ENV BASICUSER_UID 1000
 RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
     chown $BASICUSER /work && \
     mkdir $SOFT && \
-    echo "export SOFT=$HOME/soft" >> $BASHRC
+    echo "export SOFT=\$HOME/soft" >> $BASHRC
 USER $BASICUSER
 WORKDIR $HOME
 
@@ -70,25 +70,18 @@ ADD root/* $HOME/
 
 # neurodebian and Install.
 RUN \
+    apt-get install -y build-essential software-properties-common && \
+    apt-get install -y wget bzip2 unzip htop curl && \
     wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
     apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y build-essential && \
-    apt-get install -y software-properties-common && \
     apt-get install -y \
 byobu \
-ssh \
-curl \
 git \
-htop \
-unzip \
 vim \
-wget \
 xvfb \
-bzip2 \
-unzip \
 apt-utils \
 fusefat \
 graphviz \
@@ -115,11 +108,7 @@ mricron \
 dicomnifti \
 fsl-core \
 fsl-atlases \
-fsl-5.0-eddy-nonfree \
-python3-dev \
-python3-pip \
-python3-virtualenv \
-python3-tk && \
+fsl-5.0-eddy-nonfree && \
     ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0
     apt-get -y build-dep vtk6 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
@@ -163,8 +152,8 @@ RUN \
 #           ../ITK && \
 #     make -j $N_CPUS && \
 #     make install && \
-#   echo "addlibpath $SOFT/itk/build/lib" >> $BASHRC && \
-#   echo "addpath $SOFT/itk/build/bin" >> $BASHRC
+#   echo "addlibpath \$SOFT/itk/build/lib" >> $BASHRC && \
+#   echo "addpath \$SOFT/itk/build/bin" >> $BASHRC
 
 # RUN ldconfig
 
@@ -189,7 +178,7 @@ RUN \
 #            -DWRAP_RUBY=OFF \
 #            ../SimpleITK/SuperBuild && \
 #     make -j $N_CPUS && \
-#     echo "addlibpath $SOFT/simpleitk/build/lib" >> $BASHRC
+#     echo "addlibpath \$SOFT/simpleitk/build/lib" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
@@ -206,7 +195,7 @@ RUN \
     ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"] && \
     ["chsh", "-s", "/bin/bash"] && \
     cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    echo "addpath $HOME/abin" >> $BASHRC
+    echo "addpath \$HOME/abin" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
@@ -228,8 +217,8 @@ RUN \
           -DVTK_DIR=$SOFT/vtk/build \
           ../ANTs && \
     make -j $N_CPUS && \
-    echo "export ANTSPATH=${SOFT}/ants/build/bin" >> $BASHRC && \
-    echo 'addpath $ANTSPATH' >> $BASHRC
+    echo "export ANTSPATH=\${SOFT}/ants/build/bin" >> $BASHRC && \
+    echo 'addpath \$ANTSPATH' >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # PETPVC (https://github.com/UCL/PETPVC)
@@ -245,7 +234,7 @@ RUN \
           -DITK_DIR=$SOFT/ants/build/ITKv4-build \
           ../PETPVC && \
     make -j $N_CPUS && \
-    echo "addpath ${SOFT}/petpvc/build/src" >> $BASHRC
+    echo "addpath \${SOFT}/petpvc/build/src" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # Camino (http://camino.cs.ucl.ac.uk/)
@@ -256,7 +245,7 @@ RUN \
 RUN \
     cd $SOFT && \
     git clone $CAMINO_GIT camino && \
-    echo "addpath ${SOFT}/camino/bin" >> $BASHRC && \
+    echo "addpath \${SOFT}/camino/bin" >> $BASHRC && \
     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
     echo "export FSLPARALLEL=condor"  >> $BASHRC
 
@@ -277,16 +266,16 @@ RUN \
     unzip matlab_installer/installer.zip -d matlab_installer/ && \
     matlab_installer/install -inputFile mcr_options.txt && \
     rm -rf matlab_installer mcr_options.txt && \
-    echo "export MCR_DIR=$SOFT/mcr/v85" >> $BASHRC && \
-    echo "addpath $MCR_DIR/bin"         >> $BASHRC && \
+    echo "export MCR_DIR=\$SOFT/mcr/v85" >> $BASHRC && \
+    echo "addpath \$MCR_DIR/bin"         >> $BASHRC && \
     cd $SOFT && \
     curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip \
          -o spm12.zip && \
     unzip spm12.zip && \
     rm -rf spm12.zip && \
-    echo "export SPM_DIR=$SOFT/spm12"                               >> $BASHRC && \
-    echo "export SPMMCRCMD='$SPM_DIR/run_spm12.sh $MCR_DIR script'" >> $BASHRC && \
-    echo "export FORCE_SPMMCR=1"                                    >> $BASHRC
+    echo "export SPM_DIR=\$SOFT/spm12"                                 >> $BASHRC && \
+    echo "export SPMMCRCMD='\$SPM_DIR/run_spm12.sh \$MCR_DIR script'" >> $BASHRC && \
+    echo "export FORCE_SPMMCR=1"                                      >> $BASHRC
 
 ENV MCR_DIR $SOFT/mcr/v85
 ENV SPM_DIR $SOFT/spm12
@@ -296,20 +285,48 @@ ENV FORCE_SPMMCR 1
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
-RUN \
-    pip3 install -U pip setuptools virtualenvwrapper && \
-    export VIRTUALENVWRAPPER_PYTHON=`which python3` && \
-    export WORKON_HOME=$HOME/pyenvs && \
-    source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv -p /usr/bin/python3 $PYENV_NAME && \
-    source $WORKON_HOME/$PYENV_NAME/bin/activate && \
-    pip install cython && \
-    pip install numpy scipy && \
-    pip install -r $HOME/pypes_requirements.txt && \
-    echo "export VIRTUALENVWRAPPER_PYTHON=`which python3`" >> $BASHRC && \
-    echo "export WORKON_HOME=$HOME/pyenvs"                 >> $BASHRC && \
-    echo "source /usr/local/bin/virtualenvwrapper.sh"      >> $BASHRC && \
-    echo "workon $PYENV_NAME"                              >> $BASHRC
+# Install Python 3 from miniconda
+RUN wget -O miniconda.sh \
+  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+  bash miniconda.sh -b -p $HOME/miniconda && \
+  rm miniconda.sh && \
+  echo "addpath \$HOME/miniconda/bin" >> $BASHRC && \
+
+# Install matplotlib and scikit-image without Qt
+RUN conda update -y python conda && \
+    conda config --add channels conda-forge && \
+    conda install -y --no-deps \
+matplotlib \
+cycler \
+freetype \
+libpng \
+pyparsing \
+pytz \
+python-dateutil \
+six \
+pip \
+setuptools \
+&& conda clean -tipsy
+
+# RUN conda install -y \
+#   notebook \
+#   ipywidgets \
+#   terminado \
+#   psutil \
+#   numpy \
+#   scipy \
+#   pandas \
+#   bokeh \
+#   scikit-learn \
+#   statsmodels \
+#   scikit-image \
+#   networkx \
+#   pillow \
+#   && conda clean -tipsy
+
+
+# Install the other requirements
+RUN pip install -r $HOME/requirements.txt && rm -rf ~/.cache/pip/
 
 #-------------------------------------------------------------------------------
 # source .bashrc
