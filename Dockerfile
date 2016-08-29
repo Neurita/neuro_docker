@@ -1,9 +1,11 @@
 
-FROM debian:jessie
-#FROM ubuntu:16.04
+#FROM debian:jessie
+FROM ubuntu:16.04
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
 RUN ln -snf /bin/bash /bin/sh
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 ENV PETPVC_VERSION master
 ENV ITK_VERSION v4.10.0
@@ -12,8 +14,8 @@ ENV SIMPLEITK_VERSION v0.10.0
 ENV ANTS_VERSION v2.1.0
 ENV N_CPUS 2
 
-#ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
-ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-m.full
+ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
+#ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-m.full
 ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb
 ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
 
@@ -28,16 +30,16 @@ ENV PYENV_NAME pytre
 ## Configure default locale
 
 # Debian
-RUN apt-get update && \
-    apt-get -y install apt-utils locales && \
-    dpkg-reconfigure locales && \
-    echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
-    locale-gen
+#RUN apt-get update && \
+#    apt-get -y install apt-utils locales && \
+#    dpkg-reconfigure locales && \
+#    echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
+#    locale-gen
 
 # Ubuntu
-#RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-#    locale-gen en_US.UTF8 && \
-#    /usr/sbin/update-locale LANG=en_US.UTF-8
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen en_US.UTF8 && \
+    /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Set environment
 ENV LC_ALL en_US.UTF-8
@@ -81,18 +83,16 @@ RUN \
 cmake \
 gcc-4.9 \
 g++-4.9 \
-#gfortran-4.9 \
-#tcsh \
-#libjpeg62 \
-#libxml2-dev \
-#libxslt1-dev \
-#dicomnifti \
-#dcm2niix \
-#fsl-core \
+gfortran-4.9 \
+tcsh \
+libjpeg62 \
+libxml2-dev \
+libxslt1-dev \
+dicomnifti \
+dcm2niix \
 #fsl-atlases \
 fsl-5.0-eddy-nonfree \
 fsl-5.0-core \
-#apt-get install -y fsl-core && \
 && ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
 apt-get -y build-dep vtk6 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
