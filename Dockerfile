@@ -31,14 +31,12 @@ ENV PYENV_NAME pytre
 RUN apt-get update && \
     apt-get -y install apt-utils locales && \
     dpkg-reconfigure locales && \
-    locale-gen C.UTF-8 && \
-    /usr/sbin/update-locale LANG=C.UTF-8 && \
     echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
     locale-gen
 
 # Ubuntu
 #RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-#    locale-gen en_US.utf8 && \
+#    locale-gen en_US.UTF8 && \
 #    /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Set environment
@@ -72,31 +70,32 @@ ADD root/* $HOME/
 # neurodebian and Install.
 USER root
 RUN \
-    apt-get install -y build-essential software-properties-common && \
+    apt-get update && \
     apt-get install -y wget bzip2 unzip htop curl && \
     wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
     apt-get update && \
     apt-get -y upgrade && \
-    apt-get install -y \
-byobu \
-git \
-vim \
-fusefat \
-cmake \
-gcc-4.9 \
-g++-4.9 \
-gfortran-4.9 \
-tcsh \
-libjpeg62 \
-libxml2-dev \
-libxslt1-dev \
-dicomnifti \
-dcm2niix \
-fsl-core \
-fsl-atlases \
-fsl-5.0-eddy-nonfree && \
+#    apt-get install -y \
+#byobu \
+#git \
+#vim \
+#fusefat \
+#cmake \
+#gcc-4.9 \
+#g++-4.9 \
+#gfortran-4.9 \
+#tcsh \
+#libjpeg62 \
+#libxml2-dev \
+#libxslt1-dev \
+#dicomnifti \
+#dcm2niix \
+#fsl-core \
+#fsl-atlases \
+#fsl-5.0-eddy-nonfree && \
+#apt-get install -y fsl-core && \
 ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
 apt-get -y build-dep vtk6 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
