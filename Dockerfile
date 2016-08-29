@@ -1,5 +1,6 @@
 
-FROM ubuntu:16.04
+FROM debian:jessie
+#FROM ubuntu:16.04
 RUN ln -snf /bin/bash /bin/sh
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
@@ -10,7 +11,8 @@ ENV SIMPLEITK_VERSION v0.10.0
 ENV ANTS_VERSION v2.1.0
 ENV N_CPUS 2
 
-ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
+#ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
+ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-m.full
 ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb
 ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
 
@@ -27,8 +29,35 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen en_US.utf8 && \
     /usr/sbin/update-locale LANG=en_US.UTF-8
 
+# Set environment
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
+
+ENV HOME /work
+ENV SOFT $HOME/soft
+ENV BASHRC $HOME/.bashrc
+
+# Add files.
+ADD root/.bashrc $BASHRC
+ADD root/.gitconfig $HOME/.gitconfig
+ADD root/.scripts $HOME/.scripts
+ADD root/.nipype $HOME/.nipype
+ADD patches $HOME/patches
+ADD root/pypes_requirements.txt $HOME/pypes_requirements.txt
+
+# Create a non-priviledge user that will run the services
+ENV BASICUSER basicuser
+ENV BASICUSER_UID 1000
+
+RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
+    chown $BASICUSER /work
+USER $BASICUSER
+WORKDIR $HOME
+
+# define a variable for the path where the software is installed
+RUN \
+    mkdir $SOFT && \
+    echo "export SOFT=$HOME/soft" >> $BASHRC
 
 
 # neurodebian and Install.
@@ -88,29 +117,6 @@ python3-tk && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
     rm -rf /var/lib/apt/lists/*
-
-EXPOSE 22
-
-# Set environment variables.
-ENV HOME /root
-ENV SOFT /root/soft
-ENV BASHRC /root/.bashrc
-
-# Add files.
-ADD root/.bashrc $BASHRC
-ADD root/.gitconfig /root/.gitconfig
-ADD root/.scripts /root/.scripts
-ADD root/.nipype /root/.nipype
-ADD patches /root/patches
-ADD root/pypes_requirements.txt /root/pypes_requirements.txt
-
-# Define working directory.
-WORKDIR /root
-
-# define a variable for the path where the software is installed
-RUN \
-    mkdir $SOFT && \
-    echo "export SOFT=$HOME/soft" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
