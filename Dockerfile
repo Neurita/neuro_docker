@@ -1,6 +1,6 @@
 
-FROM debian:jessie
-#FROM ubuntu:16.04
+#FROM debian:jessie
+FROM ubuntu:16.04
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
 RUN ln -snf /bin/bash /bin/sh
@@ -50,11 +50,12 @@ WORKDIR $HOME
 
 # Add files.
 ADD root/.bashrc $BASHRC
-ADD root/.gitconfig $HOME/.gitconfig
-ADD root/.scripts $HOME/.scripts
-ADD root/.nipype $HOME/.nipype
-ADD patches $HOME/patches
-ADD root/pypes_requirements.txt $HOME/pypes_requirements.txt
+ADD root/.gitconfig /work/.gitconfig
+ADD root/.scripts /work/.scripts
+ADD root/.nipype /work/.nipype
+ADD root/* $HOME/
+
+
 
 # define a variable for the path where the software is installed
 RUN \
@@ -212,7 +213,7 @@ RUN \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
     cd ANTs && \
-    git apply /root/patches/ANTs/0001-fix-ifstream-error.patch && \
+    git apply $HOME/ANTs_0001-fix-ifstream-error.patch && \
     cd .. && \
     mkdir build && \
     cd build && \
