@@ -35,7 +35,6 @@ RUN apt-get update && \
     /usr/sbin/update-locale LANG=C.UTF-8 && \
     echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
     locale-gen
-ENV LC_ALL C.UTF-8 ENV LANG en_US.UTF-8 ENV LANGUAGE en_US.UTF-8 ENV TERM xterm
 
 # Ubuntu
 #RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -43,8 +42,10 @@ ENV LC_ALL C.UTF-8 ENV LANG en_US.UTF-8 ENV LANGUAGE en_US.UTF-8 ENV TERM xterm
 #    /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Set environment
-ENV LC_ALL=en_US.UTF-8
-ENV LANG=en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV TERM xterm
 
 ENV HOME /work
 ENV SOFT $HOME/soft
@@ -82,20 +83,17 @@ RUN \
 byobu \
 git \
 vim \
-xvfb \
 fusefat \
 cmake \
 gcc-4.9 \
 g++-4.9 \
 gfortran-4.9 \
 tcsh \
-gsl-bin \
-netpbm \
 libjpeg62 \
 libxml2-dev \
 libxslt1-dev \
-dcm2niix \
 dicomnifti \
+dcm2niix \
 fsl-core \
 fsl-atlases \
 fsl-5.0-eddy-nonfree && \
@@ -297,6 +295,9 @@ python-dateutil \
 six \
 pip \
 setuptools \
+numpy \
+scipy \
+pandas \
 && conda clean -tipsy
 
 # RUN conda install -y \
