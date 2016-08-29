@@ -29,7 +29,7 @@ ENV PYENV_NAME pytre
 
 # Debian
 RUN apt-get update && \
-    apt-get -y install locales && \
+    apt-get -y install apt-utils locales && \
     dpkg-reconfigure locales && \
     locale-gen C.UTF-8 && \
     /usr/sbin/update-locale LANG=C.UTF-8 && \
@@ -69,6 +69,7 @@ ADD root/.nipype $HOME/.nipype
 ADD root/* $HOME/
 
 # neurodebian and Install.
+USER root
 RUN \
     apt-get install -y build-essential software-properties-common && \
     apt-get install -y wget bzip2 unzip htop curl && \
@@ -82,38 +83,28 @@ byobu \
 git \
 vim \
 xvfb \
-apt-utils \
 fusefat \
-graphviz \
 cmake \
 gcc-4.9 \
 g++-4.9 \
 gfortran-4.9 \
 tcsh \
-xfonts-base \
-python-qt4 \
-libxm4 \
-libuil4 \
-libmrm4 \
-libmotif-common \
-libmotif-dev \
-motif-clients \
 gsl-bin \
 netpbm \
-gnome-tweak-tool \
 libjpeg62 \
 libxml2-dev \
 libxslt1-dev \
-mricron \
+dcm2niix \
 dicomnifti \
 fsl-core \
 fsl-atlases \
 fsl-5.0-eddy-nonfree && \
-    ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0
-    apt-get -y build-dep vtk6 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
-    rm -rf /var/lib/apt/lists/*
+ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
+apt-get -y build-dep vtk6 && \
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
+rm -rf /var/lib/apt/lists/*
+USER $BASICUSER
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
@@ -132,7 +123,7 @@ RUN \
           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
           ../VTK && \
     make -j $N_CPUS && \
-    make install
+    sudo make install
 
 #-------------------------------------------------------------------------------
 # ITK
