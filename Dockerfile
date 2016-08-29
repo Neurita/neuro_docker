@@ -71,20 +71,16 @@ ADD root/* $HOME/
 USER root
 RUN \
     apt-get update && \
-    apt-get install -y wget bzip2 unzip htop curl && \
+    apt-get install -y wget bzip2 unzip htop curl git && \
     wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
     apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
     sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
     apt-get update && \
     apt-get -y upgrade && \
-#    apt-get install -y \
-#byobu \
-#git \
-#vim \
-#fusefat \
-#cmake \
-#gcc-4.9 \
-#g++-4.9 \
+    apt-get install -y \
+cmake \
+gcc-4.9 \
+g++-4.9 \
 #gfortran-4.9 \
 #tcsh \
 #libjpeg62 \
@@ -94,9 +90,10 @@ RUN \
 #dcm2niix \
 #fsl-core \
 #fsl-atlases \
-#fsl-5.0-eddy-nonfree && \
+fsl-5.0-eddy-nonfree \
+fsl-5.0-core \
 #apt-get install -y fsl-core && \
-ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
+&& ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
 apt-get -y build-dep vtk6 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
