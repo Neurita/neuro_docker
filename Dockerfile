@@ -1,6 +1,6 @@
 
-#FROM debian:jessie
-FROM ubuntu:16.04
+FROM debian:jessie
+#FROM ubuntu:16.04
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
 RUN ln -snf /bin/bash /bin/sh
@@ -27,13 +27,17 @@ ENV PYENV_NAME pytre
 
 ## Configure default locale
 
+# Debian
+RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
+
+# Ubuntu
 #RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
 #    locale-gen en_US.utf8 && \
 #    /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Set environment
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
 
 ENV HOME /work
 ENV SOFT $HOME/soft
@@ -44,24 +48,18 @@ ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
 
 RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
-    chown $BASICUSER /work
+    chown $BASICUSER /work && \
+    mkdir $SOFT && \
+    echo "export SOFT=$HOME/soft" >> $BASHRC
 USER $BASICUSER
 WORKDIR $HOME
 
 # Add files.
 ADD root/.bashrc $BASHRC
-ADD root/.gitconfig /work/.gitconfig
-ADD root/.scripts /work/.scripts
-ADD root/.nipype /work/.nipype
+ADD root/.gitconfig $HOME/.gitconfig
+ADD root/.scripts $HOME/.scripts
+ADD root/.nipype $HOME/.nipype
 ADD root/* $HOME/
-
-
-
-# define a variable for the path where the software is installed
-RUN \
-    mkdir $SOFT && \
-    echo "export SOFT=$HOME/soft" >> $BASHRC
-
 
 # neurodebian and Install.
 RUN \
