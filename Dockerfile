@@ -1,8 +1,9 @@
 
 FROM debian:jessie
 #FROM ubuntu:16.04
-RUN ln -snf /bin/bash /bin/sh
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
+
+RUN ln -snf /bin/bash /bin/sh
 
 ENV PETPVC_VERSION master
 ENV ITK_VERSION v4.10.0
@@ -25,9 +26,10 @@ ENV ANTS_GIT https://github.com/stnava/ANTs.git
 ENV PYENV_NAME pytre
 
 ## Configure default locale
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen en_US.utf8 && \
-    /usr/sbin/update-locale LANG=en_US.UTF-8
+
+#RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+#    locale-gen en_US.utf8 && \
+#    /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Set environment
 ENV LC_ALL en_US.UTF-8
@@ -37,14 +39,6 @@ ENV HOME /work
 ENV SOFT $HOME/soft
 ENV BASHRC $HOME/.bashrc
 
-# Add files.
-ADD root/.bashrc $BASHRC
-ADD root/.gitconfig $HOME/.gitconfig
-ADD root/.scripts $HOME/.scripts
-ADD root/.nipype $HOME/.nipype
-ADD patches $HOME/patches
-ADD root/pypes_requirements.txt $HOME/pypes_requirements.txt
-
 # Create a non-priviledge user that will run the services
 ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
@@ -53,6 +47,14 @@ RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
     chown $BASICUSER /work
 USER $BASICUSER
 WORKDIR $HOME
+
+# Add files.
+ADD root/.bashrc $BASHRC
+ADD root/.gitconfig $HOME/.gitconfig
+ADD root/.scripts $HOME/.scripts
+ADD root/.nipype $HOME/.nipype
+ADD patches $HOME/patches
+ADD root/pypes_requirements.txt $HOME/pypes_requirements.txt
 
 # define a variable for the path where the software is installed
 RUN \
