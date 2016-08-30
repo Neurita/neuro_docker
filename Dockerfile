@@ -38,7 +38,7 @@ ENV PYENV_NAME pytre
 
 # Ubuntu
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen en_US.UTF8 && \
+    locale-gen en_US.utf8 && \
     /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Set environment
@@ -55,19 +55,19 @@ ENV BASHRC $HOME/.bashrc
 ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
 
-RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
-    chown $BASICUSER /work && \
+RUN useradd -m -d $HOME -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
     mkdir $SOFT && \
+    chown -R $BASICUSER $HOME && \
     echo "export SOFT=\$HOME/soft" >> $BASHRC
 USER $BASICUSER
 WORKDIR $HOME
 
 # Add files.
-ADD root/.bashrc $BASHRC
-ADD root/.gitconfig $HOME/.gitconfig
-ADD root/.scripts $HOME/.scripts
-ADD root/.nipype $HOME/.nipype
-ADD root/* $HOME/
+COPY root/.bashrc $BASHRC
+COPY root/.gitconfig $HOME/.gitconfig
+COPY root/.scripts $HOME/.scripts
+COPY root/.nipype $HOME/.nipype
+COPY root/* $HOME/
 
 # neurodebian and Install.
 USER root
@@ -103,8 +103,8 @@ USER $BASICUSER
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
 #-------------------------------------------------------------------------------
+WORKDIR $SOFT
 RUN \
-    cd $SOFT && \
     mkdir vtk && \
     cd vtk && \
     git clone $VTK_GIT -b $VTK_VERSION VTK && \
@@ -122,8 +122,8 @@ RUN \
 #-------------------------------------------------------------------------------
 # ITK
 #-------------------------------------------------------------------------------
+# WORKDIR $SOFT
 # RUN \
-#     cd $SOFT && \
 #     mkdir itk && \
 #     cd itk && \
 #     git clone $ITK_GIT -b $ITK_VERSION && \
@@ -146,8 +146,8 @@ RUN \
 #-------------------------------------------------------------------------------
 # SimpleITK
 #-------------------------------------------------------------------------------
+# WORKDIR $SOFT
 # RUN \
-#     cd $SOFT && \
 #     mkdir simpleitk && \
 #     cd simpleitk && \
 #     git clone --recursive $SIMPLEITK_GIT -b $SIMPLEITK_VERSION && \
@@ -170,8 +170,8 @@ RUN \
 # AFNI
 # https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
 #-------------------------------------------------------------------------------
+WORKDIR $SOFT
 RUN \
-    cd $SOFT && \
     wget -c $LIBXP_URL && \
     dpkg -i `basename $LIBXP_URL` && \
     apt-get install -f  && \
@@ -186,8 +186,8 @@ RUN \
 #-------------------------------------------------------------------------------
 # ANTS (https://github.com/stnava/ANTs)
 #-------------------------------------------------------------------------------
+WORKDIR $SOFT
 RUN \
-    cd $SOFT && \
     mkdir ants && \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
@@ -208,8 +208,8 @@ RUN \
 #-------------------------------------------------------------------------------
 # PETPVC (https://github.com/UCL/PETPVC)
 #-------------------------------------------------------------------------------
+WORKDIR $SOFT
 RUN \
-    cd $SOFT && \
     mkdir petpvc && \
     cd petpvc && \
     git clone $PETPVC_GIT -b $PETPVC_VERSION && \
@@ -227,8 +227,8 @@ RUN \
 #-------------------------------------------------------------------------------
 # FSL (http://fsl.fmrib.ox.ac.uk)
 #-------------------------------------------------------------------------------
+WORKDIR $SOFT
 RUN \
-    cd $SOFT && \
     git clone $CAMINO_GIT camino && \
     echo "addpath \${SOFT}/camino/bin" >> $BASHRC && \
     echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
@@ -239,8 +239,8 @@ RUN \
 #-------------------------------------------------------------------------------
 ENV MCR_DIR $SOFT/mcr
 
+WORKDIR $SOFT
 RUN \
-    cd $SOFT && \
     echo "destinationFolder=$MCR_DIR" > mcr_options.txt && \
     echo "agreeToLicense=yes" >> mcr_options.txt && \
     echo "outputFile=/tmp/matlabinstall_log" >> mcr_options.txt && \
@@ -271,8 +271,10 @@ ENV FORCE_SPMMCR 1
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
 # Install Python 3 from miniconda
-RUN wget -O miniconda.sh \
-  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+WORKDIR $SOFT
+RUN \
+  wget -O miniconda.sh \
+     https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
   bash miniconda.sh -b -p $HOME/miniconda && \
   rm miniconda.sh && \
   echo "addpath \$HOME/miniconda/bin" >> $BASHRC && \
