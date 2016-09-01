@@ -56,9 +56,7 @@ ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
 
 RUN useradd -m -d $HOME -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
-    mkdir $SOFT && \
-    chown -R $BASICUSER $HOME && \
-    echo "export SOFT=\$HOME/soft" >> $BASHRC
+    mkdir $SOFT
 USER $BASICUSER
 WORKDIR $HOME
 
@@ -72,6 +70,10 @@ COPY root/* $HOME/
 # neurodebian and Install.
 USER root
 RUN \
+    chown -R $BASICUSER $HOME && \
+    echo "export SOFT=\$HOME/soft" >> $BASHRC && \
+    echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
+    echo "export FSLPARALLEL=condor"  >> $BASHRC && \
     apt-get update && \
     apt-get install -y wget bzip2 unzip htop curl git && \
     wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
@@ -98,7 +100,6 @@ apt-get -y build-dep vtk6 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
 rm -rf /var/lib/apt/lists/*
-USER $BASICUSER
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
@@ -117,7 +118,29 @@ RUN \
           -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7m.so.1 \
           ../VTK && \
     make -j $N_CPUS && \
-    sudo make install
+    make install
+
+#-------------------------------------------------------------------------------
+# AFNI
+# https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
+#-------------------------------------------------------------------------------
+WORKDIR $SOFT
+RUN \
+    wget -c $LIBXP_URL && \
+    dpkg -i `basename $LIBXP_URL` && \
+    apt-get install -f  && \
+    curl -O $AFNI_URL && \
+    chsh -s /usr/bin/tcsh && \
+    tcsh @update.afni.binaries -package linux_openmp_64 -do_extras && \
+    chsh -s /bin/bash && \
+    cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
+    echo "addpath \$HOME/abin" >> $BASHRC && \
+    chown -R $BASICUSER $HOME/abin
+
+
+#-------------------------------------------------------------------------------
+## Here start the libraries that won't be installed in /usr/local
+USER $BASICUSER
 
 #-------------------------------------------------------------------------------
 # ITK
@@ -137,7 +160,6 @@ RUN \
 #           ../ITK && \
 #     make -j $N_CPUS && \
 #     make install && \
-#   echo "addlibpath \$SOFT/itk/build/lib" >> $BASHRC && \
 #   echo "addpath \$SOFT/itk/build/bin" >> $BASHRC
 
 # RUN ldconfig
@@ -164,23 +186,6 @@ RUN \
 #            ../SimpleITK/SuperBuild && \
 #     make -j $N_CPUS && \
 #     echo "addlibpath \$SOFT/simpleitk/build/lib" >> $BASHRC
-
-
-#-------------------------------------------------------------------------------
-# AFNI
-# https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/steps_linux_ubuntu.html#install-steps-linux-ubuntu
-#-------------------------------------------------------------------------------
-WORKDIR $SOFT
-RUN \
-    wget -c $LIBXP_URL && \
-    dpkg -i `basename $LIBXP_URL` && \
-    apt-get install -f  && \
-    curl -O $AFNI_URL && \
-    ["chsh", "-s", "/usr/bin/tcsh"] && \
-    ["tcsh", "@update.afni.binaries", "-package", "linux_openmp_64", "-do_extras"] && \
-    ["chsh", "-s", "/bin/bash"] && \
-    cp $HOME/abin/AFNI.afnirc $HOME/.afnirc && \
-    echo "addpath \$HOME/abin" >> $BASHRC
 
 
 #-------------------------------------------------------------------------------
@@ -230,9 +235,7 @@ RUN \
 WORKDIR $SOFT
 RUN \
     git clone $CAMINO_GIT camino && \
-    echo "addpath \${SOFT}/camino/bin" >> $BASHRC && \
-    echo "source /etc/fsl/5.0/fsl.sh" >> $BASHRC && \
-    echo "export FSLPARALLEL=condor"  >> $BASHRC
+    echo "addpath \${SOFT}/camino/bin" >> $BASHRC
 
 #-------------------------------------------------------------------------------
 # MATLAB and toolboxes
@@ -271,6 +274,9 @@ ENV FORCE_SPMMCR 1
 # Python environment with virtualenvwrapper
 #-------------------------------------------------------------------------------
 # Install Python 3 from miniconda
+
+ENV PATH="$HOME/miniconda/bin:$PATH"
+
 WORKDIR $SOFT
 RUN \
   wget -O miniconda.sh \
@@ -278,11 +284,9 @@ RUN \
   bash miniconda.sh -b -p $HOME/miniconda && \
   rm miniconda.sh && \
   echo "addpath \$HOME/miniconda/bin" >> $BASHRC && \
-
-# Install matplotlib and scikit-image without Qt
-RUN conda update -y python conda && \
-    conda config --add channels conda-forge && \
-    conda install -y --no-deps \
+  conda update -y python conda && \
+  conda config --add channels conda-forge && \
+  conda install -y --no-deps \
 matplotlib \
 cycler \
 freetype \
@@ -296,24 +300,13 @@ setuptools \
 numpy \
 scipy \
 pandas \
+scipy \
+scikit-learn \
+scikit-image \
+statsmodels \
+networkx \
+pillow \
 && conda clean -tipsy
-
-# RUN conda install -y \
-#   notebook \
-#   ipywidgets \
-#   terminado \
-#   psutil \
-#   numpy \
-#   scipy \
-#   pandas \
-#   bokeh \
-#   scikit-learn \
-#   statsmodels \
-#   scikit-image \
-#   networkx \
-#   pillow \
-#   && conda clean -tipsy
-
 
 # Install the other requirements
 RUN pip install -r $HOME/requirements.txt && rm -rf ~/.cache/pip/
