@@ -8,25 +8,31 @@ RUN ln -snf /bin/bash /bin/sh
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV PETPVC_VERSION master
+ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
+
 ENV ITK_VERSION v4.10.0
+ENV ITK_GIT http://itk.org/ITK.git
+
 ENV VTK_VERSION v6.3.0
+ENV VTK_GIT https://gitlab.kitware.com/vtk/vtk.git
+
 ENV SIMPLEITK_VERSION v0.10.0
+ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
+
 ENV ANTS_VERSION v2.1.0
-ENV N_CPUS 2
+ENV ANTS_GIT https://github.com/stnava/ANTs.git
+
+ENV DCM2NIIX_VERSION 20160606
+ENV DCM2NIIX_GIT https://github.com/neurolabusc/dcm2niix.git
 
 ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
 #ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-m.full
 ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb
 ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
-
-ENV VTK_GIT https://gitlab.kitware.com/vtk/vtk.git
-ENV ITK_GIT http://itk.org/ITK.git
-ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
-ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
-ENV ANTS_GIT https://github.com/stnava/ANTs.git
-ENV PYENV_NAME pytre
 
+ENV PYENV_NAME pytre
+ENV N_CPUS 2
 ## Configure default locale
 
 # Debian
@@ -61,10 +67,7 @@ USER $BASICUSER
 WORKDIR $HOME
 
 # Add files.
-COPY root/.bashrc $BASHRC
-COPY root/.gitconfig $HOME/.gitconfig
-COPY root/.scripts $HOME/.scripts
-COPY root/.nipype $HOME/.nipype
+COPY root/.* $HOME/
 COPY root/* $HOME/
 
 # neurodebian and Install.
@@ -100,6 +103,23 @@ apt-get -y build-dep vtk6 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
 rm -rf /var/lib/apt/lists/*
+
+#-------------------------------------------------------------------------------
+# DCM2NIIX
+#-------------------------------------------------------------------------------
+WORKDIR $SOFT
+RUN \
+    mkdir dcm2niix && \
+    cd dcm2niix && \
+    git clone $DCM2NIIX_GIT -b $DCM2NIIX_VERSION DCM2NIIX && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          ../DCM2NIIX && \
+    make -j $N_CPUS && \
+    make install && \
+    cd ../.. && \
+    rm -rf dcm2niix
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
