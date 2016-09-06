@@ -62,13 +62,17 @@ ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
 
 RUN useradd -m -d $HOME -s /bin/bash -N -u $BASICUSER_UID $BASICUSER && \
-    mkdir $SOFT
+    mkdir $SOFT && \
+    mkdir $HOME/.scripts && \
+    mkdir $HOME/.nipype
 USER $BASICUSER
 WORKDIR $HOME
 
 # Add files.
 COPY root/.* $HOME/
 COPY root/* $HOME/
+COPY root/.scripts/* $HOME/.scripts/
+COPY root/.nipype/* $HOME/.nipype/
 
 # neurodebian and Install.
 USER root
@@ -326,15 +330,18 @@ scikit-image \
 statsmodels \
 networkx \
 pillow \
+openblas \
 && conda clean -tipsy
 
 # Install the other requirements
-RUN pip install -r $HOME/requirements.txt && rm -rf ~/.cache/pip/
+RUN pip install -r $HOME/requirements.txt && \
+    rm -rf ~/.cache/pip/ && \
+    source $BASHRC
 
 #-------------------------------------------------------------------------------
 # source .bashrc
 #-------------------------------------------------------------------------------
-RUN source $BASHRC && \
-    ldconfig
+USER root
+RUN ldconfig
 
 CMD ["/bin/bash"]
