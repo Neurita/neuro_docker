@@ -30,6 +30,7 @@ ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
 ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb
 ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
+ENV SPM12_URL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6906_Linux_R2016b.zip
 
 ENV PYENV_NAME pytre
 ENV N_CPUS 2
@@ -281,8 +282,7 @@ RUN \
     echo "export MCR_DIR=\$SOFT/mcr/v85" >> $BASHRC && \
     echo "addpath \$MCR_DIR/bin"         >> $BASHRC && \
     cd $SOFT && \
-    curl -sSL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6472_Linux_R2015a.zip \
-         -o spm12.zip && \
+    curl -sSL $SPM12_URL -o spm12.zip && \
     unzip spm12.zip && \
     rm -rf spm12.zip && \
     echo "export SPM_DIR=\$SOFT/spm12"                                 >> $BASHRC && \
