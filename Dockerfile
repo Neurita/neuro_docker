@@ -31,7 +31,7 @@ ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2
 ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
 ENV SPM12_URL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6906_Linux_R2016b.zip
-ENV MLAB_URL http://www.mathworks.com/supportfiles/downloads/R2015a/deployment_files/R2015a/installers/glnxa64/MCR_R2015a_glnxa64_installer.zip
+ENV MLAB_URL http://www.mathworks.com/supportfiles/downloads/R2016b/deployment_files/R2016b/installers/glnxa64/MCR_R2016b_glnxa64_installer.zip
 
 ENV PYENV_NAME pytre
 ENV N_CPUS 2
