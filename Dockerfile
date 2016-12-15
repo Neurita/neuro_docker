@@ -102,6 +102,7 @@ libxslt1-dev \
 dicomnifti \
 dcm2niix \
 #fsl-atlases \
+xdot \
 fsl-5.0-eddy-nonfree \
 fsl-5.0-core \
 && ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
