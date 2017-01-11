@@ -38,8 +38,7 @@ ENV N_CPUS 2
 ## Configure default locale
 
 # utils for local testing
-# ENV() { export $1=$2; }
-# COPY() { cp -rdv $1 $2; }
+# ENV() { export $1=$2; }; COPY() { cp -rdv $1 $2; };
 
 # Debian
 #RUN apt-get update && \
