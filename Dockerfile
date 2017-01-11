@@ -324,6 +324,7 @@ python-dateutil \
 six \
 pip \
 setuptools \
+cython \
 numpy \
 scipy \
 pandas \
