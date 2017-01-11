@@ -37,6 +37,10 @@ ENV PYENV_NAME pytre
 ENV N_CPUS 2
 ## Configure default locale
 
+# utils for local testing
+# ENV() { export $1=$2; }
+# COPY() { cp -rdv $1 $2; }
+
 # Debian
 #RUN apt-get update && \
 #    apt-get -y install apt-utils locales && \
