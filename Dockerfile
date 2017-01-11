@@ -105,7 +105,6 @@ libxml2-dev \
 libxslt1-dev \
 dicomnifti \
 dcm2niix \
-#fsl-atlases \
 xdot \
 fsl-5.0-eddy-nonfree \
 fsl-5.0-core \
