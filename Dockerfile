@@ -282,7 +282,7 @@ RUN \
     unzip matlab_installer/installer.zip -d matlab_installer/ && \
     matlab_installer/install -inputFile mcr_options.txt && \
     rm -rf matlab_installer mcr_options.txt && \
-    echo "export MCR_DIR=\$SOFT/mcr/v85" >> $BASHRC && \
+    echo "export MCR_DIR=\$SOFT/mcr/v91" >> $BASHRC && \
     echo "addpath \$MCR_DIR/bin"         >> $BASHRC && \
     cd $SOFT && \
     curl -sSL $SPM12_URL -o spm12.zip && \
