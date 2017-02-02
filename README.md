@@ -8,6 +8,7 @@ It sets up [NeuroDebian](http://neuro.debian.net) and installs:
 - AFNI
 - VTK
 - ITK and SimpleITK (the code for this is commented for now)
+- DCM2NIIX
 - PETPVC
 - ANTs
 - SPM12 with MCR
@@ -25,8 +26,47 @@ It sets up [NeuroDebian](http://neuro.debian.net) and installs:
 
 2. Clone this repository and `cd` into it.
 
-3. Build the docker image. `docker build -t="dockerfile/neuro"`
+    ```bash
+    git clone https://github.com/Neurita/neuro_docker.git
+
+    cd neuro_docker
+    ```
+
+3. Build the docker image.
+
+    ```bash
+    docker build -t="dockerfile/neuro" .
+    ```
+
 
 ### Usage
 
-    docker run -it --rm dockerfile/neuro
+After a successful installation, you can run the docker container and run your analysis.
+
+```bash
+docker run -it dockerfile/neuro
+```
+
+### Data sharing
+
+If you want to share with the container a folder path with data, you can run the following command:
+
+```bash
+docker run -it -v <host_path>:<guest_path> dockerfile/neuro
+```
+
+For example, if you have some data in `/media/data/brains` and you would like it to be accessible in the container in `/data`. You should run:
+
+```bash
+docker run -it -v /media/data/brains:/data dockerfile/neuro
+```
+
+### Notes
+
+Remember to add the `--rm` flag to the `docker run` command if you don't want to store a new container after exiting it. This will save you disk space.
+
+Have a better understanding of the `docker run` command by running:
+
+```bash
+docker run --help
+```
