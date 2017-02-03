@@ -47,7 +47,7 @@ After a successful installation, you can run the docker container and run your a
 docker run -it dockerfile/neuro
 ```
 
-### Data sharing
+#### Data sharing
 
 If you want to share with the container a folder path with data, you can run the following command:
 
@@ -61,7 +61,27 @@ For example, if you have some data in `/media/data/brains` and you would like it
 docker run -it -v /media/data/brains:/data dockerfile/neuro
 ```
 
-### Notes
+#### The Conda Python environment
+
+This Dockerfile will setup a [Conda Python environment](https://conda.io/miniconda.html) with the Python dependencies for [Pypes](http://pypes.readthedocs.io/).
+
+Once inside the container, to start using the Conda Python environment run:
+
+```bash
+source activate
+```
+
+#### Installing more Debian packages
+
+The Dockerfile clears up the `apt` repository index after installing the needed dependencies.
+
+If you want to install more packages, first you have to recreate this index. To do this, run:
+
+```bash
+apt-get update
+```
+
+#### Notes
 
 Remember to add the `--rm` flag to the `docker run` command if you don't want to store a new container after exiting it. This will save you disk space.
 
