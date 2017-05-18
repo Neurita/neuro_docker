@@ -48,7 +48,9 @@ ENV N_CPUS 2
 #    locale-gen
 
 # Ubuntu
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+RUN apt-get update && \
+    apt-get -y install apt-utils locales &&
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen en_US.utf8 && \
     /usr/sbin/update-locale LANG=en_US.UTF-8
 
