@@ -1,5 +1,4 @@
 
-#FROM debian:jessie
 FROM ubuntu:16.04
 MAINTAINER Alexandre Savio <alexsavio@gmail.com>
 
@@ -7,48 +6,44 @@ RUN ln -snf /bin/bash /bin/sh
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV PETPVC_VERSION master
+ENV PETPVC_VERSION v1.2.1
 ENV PETPVC_GIT https://github.com/UCL/PETPVC.git
 
-ENV ITK_VERSION v4.10.0
+ENV ITK_VERSION v4.12.2
 ENV ITK_GIT http://itk.org/ITK.git
 
 ENV VTK_VERSION v6.3.0
 ENV VTK_GIT https://gitlab.kitware.com/vtk/vtk.git
 
-ENV SIMPLEITK_VERSION v0.10.0
+ENV SIMPLEITK_VERSION v1.0.1
 ENV SIMPLEITK_GIT http://itk.org/SimpleITK.git
 
-ENV ANTS_VERSION v2.1.0
+ENV ANTS_VERSION v2.2.0
 ENV ANTS_GIT https://github.com/stnava/ANTs.git
 
-ENV DCM2NIIX_VERSION 20160606
-ENV DCM2NIIX_GIT https://github.com/neurolabusc/dcm2niix.git
+# ENV DCM2NIIX_VERSION v1.0.20171017
+# ENV DCM2NIIX_GIT https://github.com/neurolabusc/dcm2niix.git
 
-ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-md.full
+ENV NEURODEBIAN_URL http://neuro.debian.net/lists/xenial.de-m.full
+ENV NEURODEBIAN_PGP hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
 #ENV NEURODEBIAN_URL http://neuro.debian.net/lists/jessie.de-m.full
 ENV LIBXP_URL http://mirrors.kernel.org/ubuntu/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb
 ENV AFNI_URL https://afni.nimh.nih.gov/pub/dist/bin/linux_fedora_21_64/@update.afni.binaries
 ENV CAMINO_GIT git://git.code.sf.net/p/camino/code
-ENV SPM12_URL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_r6906_Linux_R2016b.zip
-ENV MLAB_URL http://www.mathworks.com/supportfiles/downloads/R2016b/deployment_files/R2016b/installers/glnxa64/MCR_R2016b_glnxa64_installer.zip
+ENV SPM12_URL http://www.fil.ion.ucl.ac.uk/spm/download/restricted/utopia/dev/spm12_latest_Linux_R2017b.zip
+ENV MLAB_URL http://ssd.mathworks.com/supportfiles/downloads/R2017b/deployment_files/R2017b/installers/glnxa64/MCR_R2017b_glnxa64_installer.zip
+ENV MCR_VERSION_DIR v93
 
-ENV PYENV_NAME pytre
+ENV PYENV_NAME pyenv
 ENV N_CPUS 2
 ## Configure default locale
 
 # utils for local testing
 # ENV() { export $1=$2; }; COPY() { cp -rdv $1 $2; };
 
-# Debian
-#RUN apt-get update && \
-#    apt-get -y install apt-utils locales && \
-#    dpkg-reconfigure locales && \
-#    echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
-#    locale-gen
-
-# Ubuntu
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+RUN apt-get update && \
+    apt-get -y install apt-utils locales && \
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen en_US.utf8 && \
     /usr/sbin/update-locale LANG=en_US.UTF-8
 
@@ -89,15 +84,21 @@ RUN \
     apt-get update && \
     apt-get install -y wget bzip2 unzip htop curl git && \
     wget -O- $NEURODEBIAN_URL | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
-    apt-key adv --recv-keys --keyserver hkp://pgp.mit.edu:80 0xA5D32F012649A5A9 && \
+    apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9 && \
     sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+    echo 'deb-src http://archive.ubuntu.com/ubuntu xenial main restricted' | tee /etc/apt/sources.list && \
     apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y \
+apt-utils \
+locales \
 cmake \
 gcc-4.9 \
 g++-4.9 \
 gfortran-4.9 \
+gcc-5 \
+g++-5 \
+gfortran-5 \
 tcsh \
 libjpeg62 \
 libxml2-dev \
@@ -106,29 +107,35 @@ dicomnifti \
 dcm2niix \
 xdot \
 fsl-5.0-eddy-nonfree \
-fsl-5.0-core \
-&& ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
-apt-get -y build-dep vtk6 && \
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   40 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
-rm -rf /var/lib/apt/lists/*
+fsl-5.0-core && \
+rm -rf /var/lib/apt/lists/* && \
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5   90 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 80 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9 && \
+  apt-get build-dep vtk6
 
-#-------------------------------------------------------------------------------
-# DCM2NIIX
-#-------------------------------------------------------------------------------
-WORKDIR $SOFT
-RUN \
-    mkdir dcm2niix && \
-    cd dcm2niix && \
-    git clone $DCM2NIIX_GIT -b $DCM2NIIX_VERSION DCM2NIIX && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release \
-          ../DCM2NIIX && \
-    make -j $N_CPUS && \
-    make install && \
-    cd ../.. && \
-    rm -rf dcm2niix
+# && ln -s /usr/lib/x86_64-linux-gnu/libgsl.so /usr/lib/libgsl.so.0 && \
+
+
+# Set the locale
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen
+
+# #-------------------------------------------------------------------------------
+# # DCM2NIIX
+# #-------------------------------------------------------------------------------
+# WORKDIR $SOFT
+# RUN \
+#     mkdir dcm2niix && \
+#     cd dcm2niix && \
+#     git clone $DCM2NIIX_GIT -b $DCM2NIIX_VERSION DCM2NIIX && \
+#     mkdir build && \
+#     cd build && \
+#     cmake -DCMAKE_BUILD_TYPE=Release \
+#           ../DCM2NIIX && \
+#     make -j $N_CPUS && \
+#     make install && \
+#     cd ../.. && \
+#     rm -rf dcm2niix
 
 #-------------------------------------------------------------------------------
 # VTK (http://www.vtk.org)
@@ -225,9 +232,6 @@ RUN \
     mkdir ants && \
     cd ants && \
     git clone $ANTS_GIT -b $ANTS_VERSION ANTs && \
-    cd ANTs && \
-    git apply $HOME/ANTs_0001-fix-ifstream-error.patch && \
-    cd .. && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_BUILD_TYPE=Release \
@@ -282,20 +286,15 @@ RUN \
     unzip matlab_installer/installer.zip -d matlab_installer/ && \
     matlab_installer/install -inputFile mcr_options.txt && \
     rm -rf matlab_installer mcr_options.txt && \
-    echo "export MCR_DIR=\$SOFT/mcr/v91" >> $BASHRC && \
+    echo "export MCR_DIR=\$SOFT/mcr/\$MCR_VERSION_DIR" >> $BASHRC && \
     echo "addpath \$MCR_DIR/bin"         >> $BASHRC && \
     cd $SOFT && \
     curl -sSL $SPM12_URL -o spm12.zip && \
     unzip spm12.zip && \
     rm -rf spm12.zip && \
-    echo "export SPM_DIR=\$SOFT/spm12"                                 >> $BASHRC && \
+    echo "export SPM_DIR=\$SOFT/spm12"                                >> $BASHRC && \
     echo "export SPMMCRCMD='\$SPM_DIR/run_spm12.sh \$MCR_DIR script'" >> $BASHRC && \
     echo "export FORCE_SPMMCR=1"                                      >> $BASHRC
-
-ENV MCR_DIR $SOFT/mcr/v85
-ENV SPM_DIR $SOFT/spm12
-ENV SPMMCRCMD "$SPM_DIR/run_spm12.sh $MCR_DIR script"
-ENV FORCE_SPMMCR 1
 
 #-------------------------------------------------------------------------------
 # Python environment with virtualenvwrapper

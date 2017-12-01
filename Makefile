@@ -12,6 +12,10 @@ build:
 	@read -p "Enter container name:" container; \
 	docker build -t=$$container .
 
+login:
+	@read -p "Enter container name:" container; \
+	docker build -t=$$container .
+
 tag:
 	@echo "Creating git tag v$(version)"
 	git tag v$(version)
