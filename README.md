@@ -1,5 +1,6 @@
 ## Ubuntu Dockerfile
 
+**NOTE**: I am not maintaining this anymore since I got [neuro_ansible](https://github.com/Neurita/neuro_ansible) working with [Packer](http://packer.io/). The end result is the same, but Ansible is easier to maintain and tweak for your taste.
 
 This repository contains a **Dockerfile** of [Ubuntu](http://www.ubuntu.com/) for NeuroImaging.
 
